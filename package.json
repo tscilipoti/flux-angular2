@@ -1,0 +1,33 @@
+{
+  "name": "flux-angular2",
+  "version": "1.0.0",
+  "description": "A client framework implementation of the flux pattern.",
+  "main": "lib/local/index.js",
+  "scripts": {
+    "test": "gulp test-with-coverage",
+    "build": "gulp build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iservices/flux-angular2.git"
+  },
+  "keywords": [
+    "flux",
+    "angular2"
+  ],
+  "author": "natewallace@gmail.com",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "angular2": "^2.0.0-beta.1",
+    "build-transform": "^1.0.0",
+    "director": "^1.2.8",
+    "event-emitter": "^0.3.4",
+    "flux": "^2.1.1",
+    "gulp": "^3.9.0"
+  },
+  "devDependencies": {
+    "build-lint": "^1.0.0",
+    "build-test": "^1.0.0",
+    "jsdom": "^7.2.2"
+  }
+}
