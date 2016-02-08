@@ -392,7 +392,7 @@ Type: `Boolean`
 
 This is a property that indicates if the current code being run is within the context of a client browser.
 
-#### Page.isBrowserContext
+#### Page.isDevContext
 Type: `Boolean`
 
 This is a property that indicates if the current code being run is in the development context.
@@ -433,8 +433,8 @@ This is an optional parameter and is only used when the component parameter has 
 ### View
 Type: `Class`
 
-The View class extends the React.Component class and adds additonal functionality for sub classes.  
-It is not intended to be used directly but rather to be extended by other classes to provide custom logic.
+Abstract definition of a View.
+View classes are not intended to be used directly but rather to be extended by other classes to provide custom logic.
 
 #### View.page
 Type: `Page`
