@@ -158,8 +158,8 @@ defined in Flux.View and references the current singleton instance of the Page c
 Now that I've defined all of the views I'll need I can create a class that will bring them together to be displayed.  I'll do this with a ControllerView I'll define in a file named `QuestionControllerView.js`:
 ```JavaScript
 import Flux from 'flux-angular2';
-import QuestionList from './questionListView';
-import QuestionAdd from './questionAddView';
+import QuestionListView from './questionListView';
+import QuestionAddView from './questionAddView';
 
 class QuestionControllerView extends Flux.ControllerView {
   static get annotations() {
