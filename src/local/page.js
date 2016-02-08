@@ -4,7 +4,6 @@ import Director from 'director';
 import Flux from 'flux';
 import Reflect from './reflect';
 import HostView from './hostView';
-import './angular2-polyfills';
 
 // A singleton instance of Page.
 let currentPage = null;
