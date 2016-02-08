@@ -3,7 +3,7 @@
 This package is currently in **BETA**
 
 ## Overview
-This is a node package that contains an implementation of the flux pattern as described by facebook here: [flux](https://facebook.github.io/flux/docs/overview.html)
+This is a node package that contains an implementation of the flux pattern as described by [facebook](https://facebook.github.io/flux/docs/overview.html).
 This package is designed to work with [ECMAScript 6](https://github.com/lukehoban/es6features/blob/master/README.md) classes.
 
 ## Guide
