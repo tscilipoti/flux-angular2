@@ -205,7 +205,7 @@ class Page {
    * Render the content for this page.
    * @param {View} [component] - The component to render.  If not set the result from the getComponent function is used.
    * @param {Object} [props] - The props for the component to be rendered.  If not set the result from the getProps function is used.
-   * @returns {String|Ref} - If on the client this method returns a React ref.  If on the server this returns a string.
+   * @returns {void}
    */
   render(component, props) {
     this.mComponent = component || this.getComponent();
