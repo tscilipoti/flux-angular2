@@ -178,7 +178,7 @@ class QuestionControllerView extends Flux.ControllerView {
     return `<div>
       <QuestionAddView></QuestionAddView>
       <div>Size: {{state.questions.length}}</div>
-      <QuestionListView [props.questions]=state.questions></QuestionListView>
+      <QuestionListView [props.questions]="state.questions"></QuestionListView>
     </div>`;
   }
 
