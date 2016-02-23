@@ -23,16 +23,3 @@ for (const key in win) {
 require('angular2/bundles/angular2-polyfills');
 global.Reflect = window.Reflect;
 window.requestAnimationFrame = function () {};
-
-if (global.zone) {
-  console.log('zone defined on global');
-}
-if (global.Zone) {
-  console.log('Zone defined on global');
-}
-if (window.zone) {
-  console.log('zone defined on window');
-}
-if (window.Zone) {
-  console.log('Zone defined on window');
-}
