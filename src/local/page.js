@@ -123,6 +123,26 @@ class Page {
   }
 
   /**
+   * Set the instance of the current application that is running.
+   * @param {ApplicationRef} appRef - The application reference to set.
+   * @returns {void}
+   */
+  setApplicationRef(appRef) {
+    this.mAppRef = appRef;
+  }
+
+  /**
+   * This function is used by unit tests to manually initiate the change detection functions of angular2
+   * in order for changes to be observed in the document when testing.
+   * @returns {void}
+   */
+  tick() {
+    if (this.mAppRef) {
+      this.mAppRef.tick();
+    }
+  }
+
+  /**
    * This should be called after the page is created and it's ready to be displayed.
    * @returns {void}
    */

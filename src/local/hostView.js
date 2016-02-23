@@ -1,6 +1,6 @@
 import View from './view';
 import Page from './page';
-import { DynamicComponentLoader, ElementRef } from 'angular2/core';
+import { DynamicComponentLoader, ElementRef, ApplicationRef } from 'angular2/core';
 
 /**
  * Class used to load root level components.
@@ -16,6 +16,7 @@ class HostView {
 
   /**
    * Define the selector.
+   * @returns {String} - The selector for this view.
    */
   static getSelector() {
     return 'HostView';
@@ -34,21 +35,27 @@ class HostView {
    * @returns {Array} - The dependencies for this view.
    */
   static getParameters() {
-    return [DynamicComponentLoader, ElementRef];
+    return [DynamicComponentLoader, ElementRef, ApplicationRef];
   }
 
   /**
    * @constructor
    * @param {DynamicComponentLoader} dcl - The dependency injected dynamic component loader.
    * @param {ElementRef} element - The dependency injected element reference.
+   * @param {ApplicationRef} app - The dependency injected application reference.
    */
-  constructor(dcl, element) {
+  constructor(dcl, element, app) {
     this.dcl = dcl;
     this.element = element;
+    this.app = app;
     this.emptyView.getTemplate = function () { return ''; };
     this.emptyView.annotations = View.annotate(this.emptyView);
   }
 
+  /**
+   * Used as an empty view.
+   * @returns {void}
+   */
   emptyView() {
   }
 
@@ -57,8 +64,12 @@ class HostView {
    * @returns {void}
    */
   ngOnInit() {
+    const self = this;
     this.dcl.loadIntoLocation(this.emptyView, this.element, 'content')
-            .then((compRef) => { Page.current.setComponentRef(compRef); });
+            .then(function (compRef) {
+              Page.current.setComponentRef(compRef);
+              Page.current.setApplicationRef(self.app);
+            });
   }
 }
 

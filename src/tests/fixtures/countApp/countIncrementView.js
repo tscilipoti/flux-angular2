@@ -15,11 +15,11 @@ class CountIncrementView extends Flux.View {
   }
 
   static getTemplate() {
-    return `<div>
+    return (`<div>
       <form>
         <button id="countIncrement" type="button" (click)="handleClick()">Add</button>
       </form>
-    </div>`;
+    </div>`);
   }
 }
 

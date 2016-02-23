@@ -16,7 +16,10 @@ class View {
     // set properties which may come from the page
     const ptype = Object.getPrototypeOf(this);
     if (ptype && ptype.constructor) {
-      const value = this.page.props[ptype.constructor];
+      let value = null;
+      if (this.page && this.page.props) {
+        value = this.page.props[ptype.constructor];
+      }
       if (Reflect.isFunction(value)) {
         this.props = value.apply(this.page) || {};
       } else {

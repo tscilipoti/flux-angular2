@@ -11,9 +11,9 @@ class DetailView extends Flux.View {
   }
 
   static getTemplate() {
-    return `<div>
+    return (`<div>
       <span>Details</span>
-    </div>`;
+    </div>`);
   }
 }
 

@@ -1,6 +1,6 @@
 import Flux from '../../../local/index';
-import CountDisplay from './countDisplayView';
-import CountIncrement from './countIncrementView';
+import CountDisplayView from './countDisplayView';
+import CountIncrementView from './countIncrementView';
 
 class CountController extends Flux.ControllerView {
 
@@ -10,7 +10,7 @@ class CountController extends Flux.ControllerView {
   }
 
   handleStoreChange() {
-    this.setState({ count: this.props.store.getCount() });
+    this.state.count = this.props.store.getCount();
   }
 
   static get annotations() {
@@ -22,14 +22,14 @@ class CountController extends Flux.ControllerView {
   }
 
   static getDirectives() {
-    return [CountDisplay, CountIncrement];
+    return [CountDisplayView, CountIncrementView];
   }
 
   static getTemplate() {
-    return `<div>
-      <CountDisplay [count]={{state.count}}></CountDisplay>
-      <CountIncrement></CountIncrement>
-    </div>`;
+    return (`<div>
+      <CountDisplayView [props.count]="state.count"></CountDisplayView>
+      <CountIncrementView></CountIncrementView>
+    </div>`);
   }
 }
 

@@ -10,10 +10,14 @@ class CountDisplayView extends Flux.View {
     return 'CountDisplayView';
   }
 
+  static getInputs() {
+    return ['props.count'];
+  }
+
   static getTemplate() {
-    return `<div>
+    return (`<div>
       <span>Count: </span><span id="countDisplay">{{props.count}}</span>
-    </div>`;
+    </div>`);
   }
 }
 
