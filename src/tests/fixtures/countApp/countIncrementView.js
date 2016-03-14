@@ -10,10 +10,6 @@ class CountIncrementView extends Flux.View {
     return Flux.View.annotate(CountIncrementView);
   }
 
-  static getSelector() {
-    return 'CountIncrementView';
-  }
-
   static getTemplate() {
     return (`<div>
       <form>

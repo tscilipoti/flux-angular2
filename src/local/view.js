@@ -41,9 +41,7 @@ class View {
     }
 
     const input = {};
-    if (classType.getSelector) {
-      input.selector = classType.getSelector();
-    }
+    input.selector = View.getViewSelector(classType);
     if (classType.getTemplate) {
       input.template = classType.getTemplate();
     }
@@ -63,6 +61,23 @@ class View {
     classType.__annotationsCache = result;
 
     return result;
+  }
+
+  /**
+   * Get the selector for the given class type.
+   * @param {View} classType - The view to get the given selector for.
+   * @returns {String} The selector for the given view or null if there isn't one.
+   */
+  static getViewSelector(classType) {
+    if (!classType) {
+      return null;
+    }
+
+    if (classType.getSelector) {
+      return classType.getSelector();
+    }
+
+    return Reflect.getFunctionName(classType);
   }
 
   /**

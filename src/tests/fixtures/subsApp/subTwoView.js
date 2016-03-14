@@ -6,10 +6,6 @@ class SubTwoView extends Flux.View {
     return Flux.View.annotate(SubTwoView);
   }
 
-  static getSelector() {
-    return 'SubTwoView';
-  }
-
   static getTemplate() {
     return `<div>
       <span>Two</span>

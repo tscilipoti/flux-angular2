@@ -17,10 +17,6 @@ class CountController extends Flux.ControllerView {
     return Flux.View.annotate(CountController);
   }
 
-  static getSelector() {
-    return 'CountController';
-  }
-
   static getDirectives() {
     return [CountDisplayView, CountIncrementView];
   }

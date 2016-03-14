@@ -119,6 +119,29 @@ class Reflect {
 
     return result;
   }
+
+  /**
+   * Get the name of the given function.
+   * @param {Function} func - The function to get the name for.
+   * @returns {String} The name of the function.
+   */
+  static getFunctionName(func) {
+    if (!func || !Reflect.isFunction(func)) {
+      return '';
+    }
+
+    if (func.name) {
+      return func.name;
+    }
+
+    // for older browsers that don't support the name property
+    const result = /^function\s+([\w\$]+)/.exec(func.toString());
+    if (result && result.length === 2) {
+      return result[1];
+    }
+
+    return '';
+  }
 }
 
 export default Reflect;

@@ -6,10 +6,6 @@ class DetailView extends Flux.View {
     return Flux.View.annotate(DetailView);
   }
 
-  static getSelector() {
-    return 'DetailView';
-  }
-
   static getTemplate() {
     return (`<div>
       <span>Details</span>

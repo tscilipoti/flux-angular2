@@ -6,10 +6,6 @@ class MasterView extends Flux.View {
     return Flux.View.annotate(MasterView);
   }
 
-  static getSelector() {
-    return 'MasterView';
-  }
-
   static getTemplate() {
     return `<div>
       <span>Start</span>

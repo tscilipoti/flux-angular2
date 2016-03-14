@@ -6,10 +6,6 @@ class CustomController extends Flux.ControllerView {
     return Flux.View.annotate(CustomController);
   }
 
-  static getSelector() {
-    return 'CustomController';
-  }
-
   static getTemplate() {
     return `<div></div>`;
   }

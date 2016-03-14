@@ -6,10 +6,6 @@ class CountDisplayView extends Flux.View {
     return Flux.View.annotate(CountDisplayView);
   }
 
-  static getSelector() {
-    return 'CountDisplayView';
-  }
-
   static getTemplate() {
     return (`<div>
       <span>Count: </span><span id="countDisplay">{{props.count}}</span>

@@ -4,6 +4,7 @@ import Director from 'director';
 import Flux from 'flux';
 import Reflect from './reflect';
 import HostView from './hostView';
+import View from './view';
 
 // A singleton instance of Page.
 let currentPage = null;
@@ -242,8 +243,8 @@ class Page {
     // build inputs using function chain
     const directives = [];
     let template = '';
-    if (component && component.getSelector) {
-      const selector = component.getSelector();
+    if (component) {
+      const selector = View.getViewSelector(component);
       template = `<${selector}></${selector}>`;
 
       this.mProps[component] = props || {};
@@ -251,9 +252,9 @@ class Page {
     for (let index = 0; index < funcList.length; index++) {
       if (funcList[index].getComponent) {
         const comp = funcList[index].getComponent();
-        if (comp && comp.prototype && comp.prototype.constructor && comp.prototype.constructor.getSelector) {
+        if (comp && comp.prototype && comp.prototype.constructor) {
           directives.push(comp.prototype.constructor);
-          const selector = comp.prototype.constructor.getSelector();
+          const selector = View.getViewSelector(comp.prototype.constructor);
           template = `<${selector}>${template}</${selector}>`;
 
           this.mProps[comp.prototype.constructor] = funcList[index].getProps;
