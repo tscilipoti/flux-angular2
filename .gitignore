@@ -15,3 +15,4 @@ Thumbs.db
 
 # visual studio code files
 .vscode/
+jsconfig.json

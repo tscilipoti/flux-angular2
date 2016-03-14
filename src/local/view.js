@@ -52,6 +52,8 @@ class View {
     }
     if (classType.getInputs) {
       input.inputs = classType.getInputs();
+    } else {
+      input.inputs = View.parseInputs(input.template);
     }
     if (classType.getParameters) {
       classType.parameters = classType.getParameters();
@@ -61,6 +63,46 @@ class View {
     classType.__annotationsCache = result;
 
     return result;
+  }
+
+  /**
+   * Get unique list of inputs that begin with props.* found in the given template string.
+   * @param {String} template - The template to parse.
+   * @returns {Array} - An array of strings identifying the inputs found in the template or undefined if there aren't any.
+   */
+  static parseInputs(template) {
+    if (typeof template !== 'string') {
+      return undefined;
+    }
+
+    // find entries that start with props.*
+    const matches = template.match(/\bprops\.[\w$]+[\])]?/g);
+    if (!matches) {
+      return undefined;
+    }
+
+    // filter out duplicates and outputs
+    const map = {};
+    for (let i = 0; i < matches.length; i++) {
+      const match = matches[i];
+      if (match.charAt(match.length - 1) !== ']' && match.charAt(0) !== '$') {
+        map[match] = true;
+      }
+    }
+
+    // collect results
+    const result = [];
+    for (const match in map) {
+      if (map.hasOwnProperty(match)) {
+        result.push(match);
+      }
+    }
+
+    if (result.length > 0) {
+      return result;
+    }
+
+    return undefined;
   }
 
   /**
