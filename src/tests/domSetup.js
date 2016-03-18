@@ -27,3 +27,5 @@ for (const key in win) {
 require('angular2/bundles/angular2-polyfills');
 global.Reflect = window.Reflect;
 window.requestAnimationFrame = function () {};
+
+require('../local/ngInit');
