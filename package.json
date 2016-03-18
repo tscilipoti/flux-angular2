@@ -1,6 +1,6 @@
 {
   "name": "flux-angular2",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "A client framework implementation of the flux pattern.",
   "main": "lib/local/index.js",
   "scripts": {
@@ -24,7 +24,8 @@
     "event-emitter": "^0.3.4",
     "flux": "^2.1.1",
     "gulp": "^3.9.0",
-    "rxjs": "^5.0.0-beta.1"
+    "rxjs": "^5.0.0-beta.1",
+    "zone.js": "^0.6.4"
   },
   "devDependencies": {
     "build-lint": "^1.0.0",
