@@ -21,3 +21,5 @@ src/
 .gitignore
 gulpfile.js
 README.md
+.vscode/
+*.js.map
