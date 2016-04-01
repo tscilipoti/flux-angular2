@@ -14,16 +14,10 @@ lint.registerTasks({
 });
 
 test.registerTasks({
-  testGlob: ['lib/tests/**/*.js'],
-  codeGlob: ['lib/**/*.js', '!lib/tests/**/*.js'],
+  testGlob: ['lib/tests/**/*.[jt]s'],
+  codeGlob: ['lib/**/*.js', '!lib/tests/**/*.[jt]s'],
   thresholds: {
-    global: {
-      statements: 80,
-      branches: 50,
-      lines: 80,
-      functions: 80
-    },
-    each: 50
+    global: { lines: 75 }
   },
   require: './lib/tests/domSetup',
   outputDir: 'testResults/',
@@ -31,7 +25,7 @@ test.registerTasks({
 });
 
 transform.registerTasks({
-  glob: ['**/*.js?(x)', '!styles/**/*', '!public/**/*'],
+  glob: ['**/*.[jt]s', '!styles/**/*', '!public/**/*'],
   inputDir: 'src/',
   outputDir: 'lib/'
 });

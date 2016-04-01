@@ -2,7 +2,7 @@
 import CustomController from './fixtures/controller/customController';
 import OneStore from './fixtures/controller/oneStore';
 import TwoStore from './fixtures/controller/twoStore';
-import assert from 'assert';
+import * as assert from 'assert';
 
 /**
  * Simple unit tests.

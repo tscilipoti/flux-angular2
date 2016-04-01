@@ -1,10 +1,10 @@
 import { bootstrap } from 'angular2/bootstrap';
 import { enableProdMode } from 'angular2/core';
-import Director from 'director';
-import Flux from 'flux';
 import Reflect from './reflect';
 import HostView from './hostView';
 import View from './view';
+import * as Director from 'director';
+import * as Flux from 'flux';
 
 // A singleton instance of Page.
 let currentPage = null;
@@ -108,19 +108,6 @@ class Page {
    */
   get props() {
     return this.mProps;
-  }
-
-  /**
-   * Set the instance of the currently mounted component.
-   * This will destory any currently mounted component before replacing it.
-   * @param {Object} compRef - The currently mounted component instance.
-   * @returns {void}
-   */
-  setComponentRef(compRef) {
-    if (this.mCompRef) {
-      this.mCompRef.dispose();
-    }
-    this.mCompRef = compRef;
   }
 
   /**

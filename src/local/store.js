@@ -1,6 +1,6 @@
-import emitter from 'event-emitter';
 import Reflect from './reflect';
 import Page from './page';
+import * as emitter from 'event-emitter';
 
 /**
  * Base class for stores.

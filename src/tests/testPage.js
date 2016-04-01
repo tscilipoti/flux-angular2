@@ -3,7 +3,7 @@ import SimplePage from './fixtures/simpleApp/simplePage';
 import SubPage from './fixtures/subsApp/subPage';
 import DetailPage from './fixtures/masterApp/detailPage';
 import CountPage from './fixtures/countApp/countPage';
-import assert from 'assert';
+import * as assert from 'assert';
 
 /**
  * Simple unit tests.

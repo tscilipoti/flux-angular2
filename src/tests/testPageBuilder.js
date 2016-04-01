@@ -1,7 +1,7 @@
 /* eslint-env node, mocha */
 import PageBuilder from '../local/pageBuilder';
-import JSDom from 'jsdom';
-import assert from 'assert';
+import * as JSDom from 'jsdom';
+import * as assert from 'assert';
 
 /**
  * Simple unit tests.
