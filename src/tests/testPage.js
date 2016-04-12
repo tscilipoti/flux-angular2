@@ -18,7 +18,7 @@ describe('Page', function () {
       assert.ok(span, 'could not find span element');
       assert.equal(span.innerHTML, 'Details', 'span does not have correct value');
       done();
-    }, 0);
+    }, 100);
   });
 
   it('Page routing works as expected.', function (done) {
@@ -36,8 +36,8 @@ describe('Page', function () {
         assert.ok(span, 'could not find span element');
         assert.equal(span.innerHTML, 'Two', 'span does not have correct value');
         done();
-      }, 0);
-    }, 0);
+      }, 100);
+    }, 100);
   });
 
   it('Page with master renders as expected.', function (done) {
@@ -51,7 +51,7 @@ describe('Page', function () {
       assert.equal(spans[1].innerHTML, 'Details', 'second span has incorrect value.');
       assert.equal(spans[2].innerHTML, 'End', 'third span has incorrect value.');
       done();
-    }, 0);
+    }, 100);
   });
 
   it('Page with events renders and behaves as expected.', function (done) {
@@ -74,7 +74,7 @@ describe('Page', function () {
         assert.ok(displayCount, 'could not find countDisplay element after click.');
         assert.equal(displayCount.innerHTML, '1', 'countDisplay has incorrect value after click.');
         done();
-      }, 0);
-    }, 0);
+      }, 100);
+    }, 100);
   });
 });

@@ -1,4 +1,4 @@
-import Reflect from './reflect';
+import Inspect from './inspect';
 import Page from './page';
 import * as emitter from 'event-emitter';
 
@@ -65,7 +65,7 @@ class Store {
    */
   initActionRouter() {
     // get all of the functions defined on the prototype
-    const propNames = Reflect.getPropertyNames(
+    const propNames = Inspect.getPropertyNames(
       Object.getPrototypeOf(this),
       Store.prototype
     );
@@ -74,7 +74,7 @@ class Store {
     for (let propIndex = 0; propIndex < propNames.length; propIndex++) {
       // collect all property names that begin with the text 'action'
       const propName = propNames[propIndex];
-      if (Reflect.isFunction(this[propName]) && propName.length > 6 && propName.indexOf('action') === 0) {
+      if (Inspect.isFunction(this[propName]) && propName.length > 6 && propName.indexOf('action') === 0) {
         const action = propName[6].toLowerCase() + propName.slice(7);
         this.actionRoutes[action] = propName;
       }

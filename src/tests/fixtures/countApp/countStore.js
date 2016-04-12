@@ -12,6 +12,7 @@ class CountStore extends Flux.Store {
   }
 
   actionIncrement() {
+    console.log('store updated');
     this.mCount = this.mCount + 1;
     this.emitChange();
   }

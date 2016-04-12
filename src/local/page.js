@@ -1,6 +1,6 @@
 import { bootstrap } from 'angular2/bootstrap';
 import { enableProdMode } from 'angular2/core';
-import Reflect from './reflect';
+import Inspect from './inspect';
 import HostView from './hostView';
 import View from './view';
 import * as Director from 'director';
@@ -60,7 +60,7 @@ class Page {
     if (this.mIsBrowserContext !== undefined) {
       return this.mIsBrowserContext;
     }
-    return Reflect.isBrowserContext();
+    return Inspect.isBrowserContext();
   }
 
   /**
@@ -70,7 +70,7 @@ class Page {
     if (this.mIsDevContext !== undefined) {
       return this.mIsDevContext;
     }
-    return Reflect.isDevContext();
+    return Inspect.isDevContext();
   }
 
   /**
@@ -156,7 +156,7 @@ class Page {
     }
 
     // get all of the functions defined on the prototype
-    const propNames = Reflect.getPropertyNames(
+    const propNames = Inspect.getPropertyNames(
       Object.getPrototypeOf(this),
       Page.prototype
     );
@@ -165,7 +165,7 @@ class Page {
     for (let propIndex = 0; propIndex < propNames.length; propIndex++) {
       // collect all property names that begin with the text 'route'
       const propName = propNames[propIndex];
-      if (Reflect.isFunction(this[propName]) && propName.indexOf('route') === 0) {
+      if (Inspect.isFunction(this[propName]) && propName.indexOf('route') === 0) {
         let pathName = '?((\\w|.)*)';
         if (propName.length > 5) {
           pathName = propName.slice(5);
@@ -180,7 +180,7 @@ class Page {
         routes[pathName] = callFunc;
 
         // get all of the parameters that will be included in the routing definition
-        const params = Reflect.getParameterNames(this[propName]);
+        const params = Inspect.getParameterNames(this[propName]);
         for (let paramIndex = 0; paramIndex < params.length; paramIndex++) {
           if (paramIndex === params.length - 1 && params[paramIndex] === 'any') {
             pathName += '/?((\\w|.)*)';
@@ -206,7 +206,15 @@ class Page {
    * @returns {void}
    */
   route() {
+    this.mStore = createStore(this.storeDispatch);
     this.render();
+  }
+
+  /**
+   * 
+   */
+  storeDispatch(state, action) {
+    return state;
   }
 
   /**
@@ -221,7 +229,7 @@ class Page {
 
     // get all of the functions defined on the prototype chain
     const ptype = Object.getPrototypeOf(this);
-    const funcList = Reflect.getFunctionChain(
+    const funcList = Inspect.getFunctionChain(
       ['getComponent', 'getProps'],
       component ? Object.getPrototypeOf(ptype) : ptype,
       Page.prototype
@@ -231,7 +239,7 @@ class Page {
     const directives = [];
     let template = '';
     if (component) {
-      const selector = View.getViewSelector(component);
+      const selector = View.getSelector(component);
       template = `<${selector}></${selector}>`;
 
       this.mProps[component] = props || {};
@@ -241,20 +249,19 @@ class Page {
         const comp = funcList[index].getComponent();
         if (comp && comp.prototype && comp.prototype.constructor) {
           directives.push(comp.prototype.constructor);
-          const selector = View.getViewSelector(comp.prototype.constructor);
+          const selector = View.getSelector(comp);
           template = `<${selector}>${template}</${selector}>`;
 
           this.mProps[comp.prototype.constructor] = funcList[index].getProps;
         }
       }
     }
-    template = `<div #content>${template}</div>`;
+    template = `<div id="content">${template}</div>`;
     if (component) {
       directives.push(component);
     }
 
     // set components to be rendered in host view
-    HostView.__annotationsCache = null;
     HostView.getDirectives = function () {
       return directives;
     };

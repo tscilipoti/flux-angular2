@@ -2,7 +2,7 @@
 /**
  * Helper functions for doing reflection.
  */
-class Reflect {
+class Inspect {
 
   /**
    * Check to see if the current code is running a browser versus running on a server.
@@ -47,7 +47,7 @@ class Reflect {
    * @returns {Array} An array of parameter names for the given function.
    */
   static getParameterNames(func) {
-    if (!Reflect.isFunction(func)) {
+    if (!Inspect.isFunction(func)) {
       return [];
     }
 
@@ -126,7 +126,7 @@ class Reflect {
    * @returns {String} The name of the function.
    */
   static getFunctionName(func) {
-    if (!func || !Reflect.isFunction(func)) {
+    if (!func || !Inspect.isFunction(func)) {
       return '';
     }
 
@@ -144,4 +144,4 @@ class Reflect {
   }
 }
 
-export default Reflect;
+export default Inspect;

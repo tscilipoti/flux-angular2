@@ -1,6 +1,6 @@
 import Page from './page';
-import Reflect from './reflect';
-import { Component } from 'angular2/core';
+import Inspect from './inspect';
+import { Component, ComponentMetadata } from 'angular2/core';
 
 /**
  * A view on the page.
@@ -20,7 +20,7 @@ class View {
       if (this.page && this.page.props) {
         value = this.page.props[ptype.constructor];
       }
-      if (Reflect.isFunction(value)) {
+      if (Inspect.isFunction(value)) {
         this.props = value.apply(this.page) || {};
       } else {
         this.props = value || {};
@@ -30,94 +30,62 @@ class View {
     }
   }
 
-  /**
-   * Build out annotations.
-   * @param {Object} classType - The class type to annotate.
-   * @returns {Array} - An array of annotations.
-   */
-  static annotate(classType) {
-    if (classType.__annotationsCache) {
-      return classType.__annotationsCache;
-    }
+  setState(value) {
+    this.state = value;
+  }
 
-    const input = {};
-    input.selector = View.getViewSelector(classType);
-    if (classType.getTemplate) {
-      input.template = classType.getTemplate();
-    }
-    if (classType.getDirectives) {
-      input.directives = classType.getDirectives();
-    }
-    if (classType.getInputs) {
-      input.inputs = classType.getInputs();
-    } else {
-      input.inputs = View.parseInputs(input.template);
-    }
-    if (classType.getParameters) {
-      classType.parameters = classType.getParameters();
-    }
+  getState() {
+    return this.state;
+  }
 
-    const result = [new Component(input)];
-    classType.__annotationsCache = result;
+  setProps(value) {
+    this.props = value;
+  }
 
-    return result;
+  getProps() {
+    return this.props;
   }
 
   /**
-   * Get the selector for the given class type.
-   * @param {View} classType - The view to get the given selector for.
-   * @returns {String} The selector for the given view or null if there isn't one.
+   * Shortcut to get the angular2 Component class.
    */
-  static getViewSelector(classType) {
-    if (!classType) {
+  static get Component() {
+    return Component;
+  }
+
+  /**
+   * Get the selector for the given component.
+   * @param {Object} component - The component to get the selector from.
+   * @returns {string} The selector for the given component or null if one isn't found.
+   */
+  static getSelector(component) {
+    // use reflect
+    if (typeof Reflect !== 'undefined') {
+      const annotations = Reflect.getOwnMetadata('annotations', component);
+      if (annotations && annotations.length) {
+        for (let i = 0; i < annotations.length; i++) {
+          if (annotations[i].constructor === ComponentMetadata) {
+            return annotations[i].selector;
+          }
+        }
+      }
+    }
+
+    // fall back if reflect isn't defined
+    if (!component ||
+        !component.prototype ||
+        !component.prototype.constructor ||
+        !component.prototype.constructor.annotations ||
+        !component.prototype.constructor.annotations.length) {
       return null;
     }
-
-    if (classType.getSelector) {
-      return classType.getSelector();
-    }
-
-    return Reflect.getFunctionName(classType);
-  }
-
-  /**
-   * Get unique list of inputs that begin with props.* found in the given template string.
-   * @param {String} template - The template to parse.
-   * @returns {Array} - An array of strings identifying the inputs found in the template or undefined if there aren't any.
-   */
-  static parseInputs(template) {
-    if (typeof template !== 'string') {
-      return undefined;
-    }
-
-    // find entries that start with props.*
-    const matches = template.match(/\bprops\.[\w$]+[\])]?/g);
-    if (!matches) {
-      return undefined;
-    }
-
-    // filter out duplicates and outputs
-    const map = {};
-    for (let i = 0; i < matches.length; i++) {
-      const match = matches[i];
-      if (match.charAt(match.length - 1) !== ']' && match.charAt(0) !== '$') {
-        map[match] = true;
+    for (let i = 0; i < component.prototype.constructor.annotations.length; i++) {
+      const item = component.prototype.constructor.annotations[i];
+      if (item && item.constructor && item.constructor === ComponentMetadata) {
+        return item.selector;
       }
     }
-
-    // collect results
-    const result = [];
-    for (const match in map) {
-      if (map.hasOwnProperty(match)) {
-        result.push(match);
-      }
-    }
-
-    if (result.length > 0) {
-      return result;
-    }
-
-    return undefined;
+    return null;
   }
 
   /**

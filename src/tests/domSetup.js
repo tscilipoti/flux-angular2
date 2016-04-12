@@ -6,6 +6,10 @@ const doc = jsdom.jsdom('<!doctype html><html><body id="page-body-content"><Host
 // get the window object out of the document
 const win = doc.defaultView;
 
+// workaround for zone.js
+global.XMLHttpRequest = function () {};
+global.XMLHttpRequest.prototype.send = function () {};
+
 // defines angular2 dependencies
 require('../local/init');
 
