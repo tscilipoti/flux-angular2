@@ -53,7 +53,7 @@ export default class PageBuilder {
   renderToString(page) {
     const styleSheets = (Array.isArray(this.styleSheets) ? this.styleSheets.join('\n    ') : this.styleSheets) || '';
     const scripts = (Array.isArray(this.scripts) ? this.scripts.join('\n    ') : this.scripts) || '';
-    const selector = View.getSelector(page.getView());
+    const selector = (page ? View.getSelector(page.getView()) : 'div');
 
     return `<!DOCTYPE HTML>
 <html>
