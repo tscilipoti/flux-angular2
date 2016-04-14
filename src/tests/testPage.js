@@ -1,8 +1,9 @@
 /* eslint-env node, mocha */
 import SimplePage from './fixtures/simpleApp/simplePage';
-import SubPage from './fixtures/subsApp/subPage';
-import DetailPage from './fixtures/masterApp/detailPage';
 import CountPage from './fixtures/countApp/countPage';
+import QuestionPage from './fixtures/questionApp/questionPage';
+import PageBuilder from '../local/pageBuilder';
+import * as jsdom from 'jsdom';
 import * as assert from 'assert';
 
 /**
@@ -10,54 +11,27 @@ import * as assert from 'assert';
  */
 describe('Page', function () {
   it('Simple page renders as expected.', function (done) {
-    const page = new SimplePage({ isDevContext: true });
-    page.load();
+    const pb = new PageBuilder();
+    const page = new SimplePage();
+    global.document = jsdom.jsdom(pb.renderToString(page));
 
-    setTimeout(function () {
+    page.load().then(function () {
       const span = document.querySelector('span');
       assert.ok(span, 'could not find span element');
       assert.equal(span.innerHTML, 'Details', 'span does not have correct value');
       done();
-    }, 100);
-  });
-
-  it('Page routing works as expected.', function (done) {
-    const page = new SubPage({ isDevContext: true });
-    page.load();
-
-    setTimeout(function () {
-      let span = document.querySelector('span');
-      assert.ok(span, 'could not find span element');
-      assert.equal(span.innerHTML, 'One', 'span does not have correct value');
-
-      page.routeSubTwo();
-      setTimeout(function () {
-        span = document.querySelector('span');
-        assert.ok(span, 'could not find span element');
-        assert.equal(span.innerHTML, 'Two', 'span does not have correct value');
-        done();
-      }, 100);
-    }, 100);
-  });
-
-  it('Page with master renders as expected.', function (done) {
-    const page = new DetailPage({ isDevContext: true });
-    page.load();
-    setTimeout(function () {
-      const spans = document.querySelectorAll('span');
-      assert.ok(spans, 'could not find spans');
-      assert.equal(spans.length, 3, 'incorrect number of spans');
-      assert.equal(spans[0].innerHTML, 'Start', 'first span has incorrect value.');
-      assert.equal(spans[1].innerHTML, 'Details', 'second span has incorrect value.');
-      assert.equal(spans[2].innerHTML, 'End', 'third span has incorrect value.');
-      done();
-    }, 100);
+    }).catch(function (err) {
+      done(err);
+    });
   });
 
   it('Page with events renders and behaves as expected.', function (done) {
-    const page = new CountPage({ isDevContext: true });
-    page.load();
-    setTimeout(function () {
+    const pb = new PageBuilder();
+    const page = new CountPage();
+    global.document = jsdom.jsdom(pb.renderToString(page));
+
+    page.load().then(function () {
+      page.tick();
       let displayCount = document.querySelector('#countDisplay');
       const incrementCount = document.querySelector('#countIncrement');
 
@@ -75,6 +49,37 @@ describe('Page', function () {
         assert.equal(displayCount.innerHTML, '1', 'countDisplay has incorrect value after click.');
         done();
       }, 100);
-    }, 100);
+    }).catch(function (err) {
+      done(err);
+    });
+  });
+
+  it('QuestionPage renders and behaves as expected.', function (done) {
+    const pb = new PageBuilder();
+    const page = new QuestionPage();
+    global.document = jsdom.jsdom(pb.renderToString(page));
+
+    page.load().then(function () {
+      page.tick();
+      let questionSize = document.querySelector('#questionSize');
+      const questionAdd = document.querySelector('#questionAdd');
+
+      assert.ok(questionSize, 'could not find questionSize element');
+      assert.equal(questionSize.innerHTML, '0', 'questionSize has incorrect value.');
+      assert.ok(questionAdd, 'could not find questionAdd element');
+
+      // simulate a click on the increment count element.
+      questionAdd.dispatchEvent(new Event('click'));
+      page.tick();
+
+      setTimeout(function () {
+        questionSize = document.querySelector('#questionSize');
+        assert.ok(questionSize, 'could not find questionSize element after click.');
+        assert.equal(questionSize.innerHTML, '1', 'questionSize has incorrect value after click.');
+        done();
+      }, 100);
+    }).catch(function (err) {
+      done(err);
+    });
   });
 });

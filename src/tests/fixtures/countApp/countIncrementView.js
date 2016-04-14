@@ -11,7 +11,7 @@ import Flux from '../../../local/index';
 class CountIncrementView extends Flux.View {
 
   handleClick() {
-    this.page.dispatcher.dispatch({ actionType: 'increment' });
+    this.dispatch({ type: 'increment' });
   }
 }
 

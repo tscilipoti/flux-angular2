@@ -3,7 +3,7 @@ import DetailView from './detailView';
 
 class SimplePage extends Flux.Page {
 
-  getComponent() {
+  getView() {
     return DetailView;
   }
 }

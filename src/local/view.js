@@ -1,49 +1,17 @@
 import Page from './page';
-import Inspect from './inspect';
 import { Component, ComponentMetadata } from 'angular2/core';
 
 /**
  * A view on the page.
  */
-class View {
+export default class View {
 
   /**
    * @constructor
    */
   constructor() {
     this.state = {};
-
-    // set properties which may come from the page
-    const ptype = Object.getPrototypeOf(this);
-    if (ptype && ptype.constructor) {
-      let value = null;
-      if (this.page && this.page.props) {
-        value = this.page.props[ptype.constructor];
-      }
-      if (Inspect.isFunction(value)) {
-        this.props = value.apply(this.page) || {};
-      } else {
-        this.props = value || {};
-      }
-    } else {
-      this.props = {};
-    }
-  }
-
-  setState(value) {
-    this.state = value;
-  }
-
-  getState() {
-    return this.state;
-  }
-
-  setProps(value) {
-    this.props = value;
-  }
-
-  getProps() {
-    return this.props;
+    this.props = {};
   }
 
   /**
@@ -96,6 +64,15 @@ class View {
   }
 
   /**
+   * Dispatch an action to the page store.
+   * @param {Object} action - The action to dispatch.
+   * @returns {void}
+   */
+  dispatch(action) {
+    this.page.store.dispatch(action);
+  }
+
+  /**
    * Call the init function.
    * @returns {void}
    */
@@ -125,5 +102,3 @@ class View {
   onDestroy() {
   }
 }
-
-export default View;

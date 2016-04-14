@@ -3,7 +3,7 @@ import CountDisplayView from './countDisplayView';
 import CountIncrementView from './countIncrementView';
 
 @Flux.View.Component({
-  selector: 'CountController',
+  selector: 'CountApp',
   template: (`<div>
     <CountDisplayView [props.count]="state.count"></CountDisplayView>
     <CountIncrementView></CountIncrementView>
@@ -11,16 +11,22 @@ import CountIncrementView from './countIncrementView';
   inputs: ['props.count'],
   directives: [CountDisplayView, CountIncrementView]
 })
-class CountController extends Flux.ControllerView {
+class CountApp extends Flux.AppView {
 
-  onInit() {
-    this.setState({ count: this.getProps().store.getCount() });
-    this.addStore(this.getProps().store);
+  reduce(state, action) {
+    const result = { count: this.props.countReducer.reduce(state.count, action) };
+    return result;
   }
 
-  handleStoreChange() {
-    this.setState({ count: this.getProps().store.getCount() });
+  initialState() {
+    return {
+      count: 0
+    };
+  }
+
+  storeChanged() {
+    this.state.count = this.storeState.count;
   }
 }
 
-export default CountController;
+export default CountApp;

@@ -1,18 +1,18 @@
 import { bootstrap } from 'angular2/bootstrap';
-import { enableProdMode } from 'angular2/core';
+import { enableProdMode, ApplicationRef } from 'angular2/core';
+import { createStore } from 'redux';
 import Inspect from './inspect';
-import HostView from './hostView';
-import View from './view';
-import * as Director from 'director';
-import * as Flux from 'flux';
 
 // A singleton instance of Page.
 let currentPage = null;
 
+// set to true after angular2 has been initialized.
+let ngInit = false;
+
 /**
  * Abstract definition of a page.
  */
-class Page {
+export default class Page {
 
   /**
    * Constructor.
@@ -28,12 +28,8 @@ class Page {
     const opts = options || {};
 
     this.mIsInitialized = false;
-    this.mDispatcher = new Flux.Dispatcher();
-    this.mComponent = null;
-    this.mProps = null;
 
     this.mTitle = opts.title || '';
-    this.mContainerId = opts.containerId || 'page-body-content';
     this.mIsBrowserContext = opts.isBrowserContext;
     this.mIsDevContext = opts.isDevContext;
   }
@@ -49,8 +45,22 @@ class Page {
   /**
    * Get the dispatcher being used for this page.
    */
-  get dispatcher() {
-    return this.mDispatcher;
+  get store() {
+    return this.mStore;
+  }
+
+  /**
+   * Get the view for this page.
+   */
+  get view() {
+    return this.mView;
+  }
+
+  /**
+   * Get the app for the page.
+   */
+  get app() {
+    return this.mApp;
   }
 
   /**
@@ -84,6 +94,22 @@ class Page {
   }
 
   /**
+   * The view to display on the page.
+   * @returns {Object} undefined.
+   */
+  getView() {
+    return undefined;
+  }
+
+  /**
+   * Properties for the page.
+   * @returns {Object} Empty object.
+   */
+  getProps() {
+    return {};
+  }
+
+  /**
    * Set the title for this page.
    * @param {String} value - The value for the page title.
    * @returns {void}
@@ -97,26 +123,13 @@ class Page {
   }
 
   /**
-   * Get the root level component for the page.
-   */
-  get component() {
-    return this.mComponent;
-  }
-
-  /**
-   * Get the root level properties for the page.
-   */
-  get props() {
-    return this.mProps;
-  }
-
-  /**
-   * Set the instance of the current application that is running.
-   * @param {ApplicationRef} appRef - The application reference to set.
+   * Handle the given error.
+   * @param {Error} err - The error to handle.
    * @returns {void}
    */
-  setApplicationRef(appRef) {
-    this.mAppRef = appRef;
+  handleError(err) {
+    console.error(err.message);
+    console.error(err.stack);
   }
 
   /**
@@ -125,152 +138,72 @@ class Page {
    * @returns {void}
    */
   tick() {
-    if (this.mAppRef) {
-      this.mAppRef.tick();
+    if (this.app) {
+      this.app.tick();
     }
   }
 
   /**
    * This should be called after the page is created and it's ready to be displayed.
-   * @returns {void}
+   * @returns {Promise} A promise that resolves when the page is done loading.
    */
   load() {
+    const self = this;
     if (!this.mIsInitialized) {
-      if (!this.isDevContext) {
-        enableProdMode();
-      }
       this.mIsInitialized = true;
+      if (!this.isDevContext && !ngInit) {
+        enableProdMode();
+        ngInit = true;
+      }
       this.title = this.mTitle;
-      this.render();
-      this.initRouter();
+      return bootstrap(this.getView()).then(function (compRef) {
+        self.mView = compRef.instance;
+        self.mApp = compRef.injector.get(ApplicationRef);
+        self.initStore();
+      });
     }
   }
 
   /**
-   * Setup the routing for the page.  Only works in the browser.
+   * Create and wire up the store.
    * @returns {void}
    */
-  initRouter() {
-    if (!this.isBrowserContext) {
-      return;
+  initStore() {
+    if (this.mStoreUnsubscribe) {
+      this.mStoreUnsubscribe();
     }
+    this.mStore = createStore(this.storeReducer.bind(this));
+    this.mStoreUnsubscribe = this.mStore.subscribe(this.storeListener.bind(this));
+  }
 
-    // get all of the functions defined on the prototype
-    const propNames = Inspect.getPropertyNames(
-      Object.getPrototypeOf(this),
-      Page.prototype
-    );
-
-    const routes = {};
-    for (let propIndex = 0; propIndex < propNames.length; propIndex++) {
-      // collect all property names that begin with the text 'route'
-      const propName = propNames[propIndex];
-      if (Inspect.isFunction(this[propName]) && propName.indexOf('route') === 0) {
-        let pathName = '?((\\w|.)*)';
-        if (propName.length > 5) {
-          pathName = propName.slice(5);
-          pathName = '/' + pathName[0].toLowerCase() + pathName.slice(1);
-        }
-
-        const callFunc = function () { // eslint-disable-line no-loop-func
-          this[propName].apply(this, arguments);
-        }.bind(this);
-
-        // route without any params set
-        routes[pathName] = callFunc;
-
-        // get all of the parameters that will be included in the routing definition
-        const params = Inspect.getParameterNames(this[propName]);
-        for (let paramIndex = 0; paramIndex < params.length; paramIndex++) {
-          if (paramIndex === params.length - 1 && params[paramIndex] === 'any') {
-            pathName += '/?((\\w|.)*)';
-          } else {
-            pathName += '/:' + params[paramIndex];
-          }
-          // route with optional parameters set
-          routes[pathName] = callFunc;
-        }
+  /**
+   * Handles updates to the store.
+   * @param {Object} state - The previous state.
+   * @param {Object} action - The action to perform.
+   * @returns {Object} The new state.
+   */
+  storeReducer(state, action) {
+    try {
+      if (action.type === '@@redux/INIT') {
+        return (!this.view || !this.view.initialState) ? {} : this.view.initialState();
       }
-    }
-
-    // hook up the router
-    this.mRouter = new Director.Router(routes);
-    if (this.mRouter.init) {
-      this.mRouter.init();
-    }
-  }
-
-  /**
-   * The default route which gets called if no other route matches.
-   * The default page gets rendered in this case.
-   * @returns {void}
-   */
-  route() {
-    this.mStore = createStore(this.storeDispatch);
-    this.render();
-  }
-
-  /**
-   * 
-   */
-  storeDispatch(state, action) {
-    return state;
-  }
-
-  /**
-   * Render the content for this page.
-   * @param {View} [component] - The component to render.  If not set the result from the getComponent function is used.
-   * @param {Object} [props] - The props for the component to be rendered.  If not set the result from the getProps function is used.
-   * @returns {void}
-   */
-  render(component, props) {
-    this.mComponent = component || this.getComponent();
-    this.mProps = {};
-
-    // get all of the functions defined on the prototype chain
-    const ptype = Object.getPrototypeOf(this);
-    const funcList = Inspect.getFunctionChain(
-      ['getComponent', 'getProps'],
-      component ? Object.getPrototypeOf(ptype) : ptype,
-      Page.prototype
-    );
-
-    // build inputs using function chain
-    const directives = [];
-    let template = '';
-    if (component) {
-      const selector = View.getSelector(component);
-      template = `<${selector}></${selector}>`;
-
-      this.mProps[component] = props || {};
-    }
-    for (let index = 0; index < funcList.length; index++) {
-      if (funcList[index].getComponent) {
-        const comp = funcList[index].getComponent();
-        if (comp && comp.prototype && comp.prototype.constructor) {
-          directives.push(comp.prototype.constructor);
-          const selector = View.getSelector(comp);
-          template = `<${selector}>${template}</${selector}>`;
-
-          this.mProps[comp.prototype.constructor] = funcList[index].getProps;
-        }
+      if (!this.view || !this.view.reduce) {
+        return state;
       }
+      return this.view.reduce(state, action);
+    } catch (err) {
+      this.handleError(err);
+      return state;
     }
-    template = `<div id="content">${template}</div>`;
-    if (component) {
-      directives.push(component);
+  }
+
+  /**
+   * Notify view that the store has been changed.
+   * @returns {void}
+   */
+  storeListener() {
+    if (this.view && this.view.storeChanged) {
+      this.view.storeChanged();
     }
-
-    // set components to be rendered in host view
-    HostView.getDirectives = function () {
-      return directives;
-    };
-    HostView.getTemplate = function () {
-      return template;
-    };
-
-    bootstrap(HostView);
   }
 }
-
-export default Page;

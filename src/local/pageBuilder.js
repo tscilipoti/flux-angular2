@@ -1,7 +1,9 @@
+import View from './view';
+
 /**
  * Class used to build html output for pages.
  */
-class PageBuilder {
+export default class PageBuilder {
 
   /**
    * @constructor
@@ -45,11 +47,13 @@ class PageBuilder {
 
   /**
    * Write the given page out to a string.
+   * @param {Page} page - The page to render to string.
    * @returns {String} A string representation of the given page.
    */
-  renderToString() {
+  renderToString(page) {
     const styleSheets = (Array.isArray(this.styleSheets) ? this.styleSheets.join('\n    ') : this.styleSheets) || '';
     const scripts = (Array.isArray(this.scripts) ? this.scripts.join('\n    ') : this.scripts) || '';
+    const selector = View.getSelector(page.getView());
 
     return `<!DOCTYPE HTML>
 <html>
@@ -57,11 +61,9 @@ class PageBuilder {
     ${styleSheets}
     ${scripts}
   </head>
-  <body id="page-body-content">
-    <HostView></HostView>
+  <body>
+    <${selector}></${selector}>
   </body>
 </html>`;
   }
 }
-
-export default PageBuilder;

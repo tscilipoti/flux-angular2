@@ -1,20 +1,20 @@
 import Flux from '../../../local/index';
-import CountController from './countController';
-import CountStore from './countStore';
+import CountApp from './countAppView';
+import CountReducer from './countReducer';
 
 class SimplePage extends Flux.Page {
 
   constructor(opts) {
     super(opts);
-    this.mStore = new CountStore();
+    this.mCountReducer = new CountReducer();
   }
 
-  getComponent() {
-    return CountController;
+  getView() {
+    return CountApp;
   }
 
   getProps() {
-    return { store: this.mStore };
+    return { countReducer: this.mCountReducer };
   }
 }
 

@@ -1,18 +1,18 @@
-import ControllerView from './controllerView';
+import AppView from './appView';
 import Page from './page';
-import Store from './store';
+import Reducer from './reducer';
 import View from './view';
 
 /**
  * Holds references of all of the public classes in the package.
  */
-class FluxBase {
+export default class FluxBase {
 
   /**
-   * Get the ControllerView class.
+   * Get the AppView class.
    */
-  static get ControllerView() {
-    return ControllerView;
+  static get AppView() {
+    return AppView;
   }
 
   /**
@@ -23,10 +23,10 @@ class FluxBase {
   }
 
   /**
-   * Get the Store class.
+   * Get the Reducer class.
    */
-  static get Store() {
-    return Store;
+  static get Reducer() {
+    return Reducer;
   }
 
   /**
@@ -36,5 +36,3 @@ class FluxBase {
     return View;
   }
 }
-
-export default FluxBase;
