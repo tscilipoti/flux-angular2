@@ -1,5 +1,5 @@
+require('reflect-metadata');
 import { enableProdMode, ApplicationRef } from 'angular2/core';
-import { bootstrap } from 'angular2/platform/browser';
 import { createStore } from 'redux';
 import Inspect from './inspect';
 
@@ -156,6 +156,7 @@ export default class Page {
         ngInit = true;
       }
       this.title = this.mTitle;
+      const bootstrap = require('angular2/platform/browser').bootstrap;
       return bootstrap(this.getView()).then(function (compRef) {
         self.mView = compRef.instance;
         self.mApp = compRef.injector.get(ApplicationRef);
