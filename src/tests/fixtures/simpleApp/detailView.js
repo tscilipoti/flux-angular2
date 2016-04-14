@@ -1,6 +1,6 @@
 import Flux from '../../../local/index';
 
-@Flux.View.Component({
+@Flux.View.component({
   selector: 'DetailsView',
   template: (`<div>
     <span>Details</span>

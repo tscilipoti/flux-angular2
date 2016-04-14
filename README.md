@@ -72,7 +72,7 @@ First up I'll write the view for displaying questions that have been added.  Thi
 ```JavaScript
 import Flux from 'flux-angular2';
 
-@Flux.View.Component({
+@Flux.View.component({
   selector: 'QuestionListView',
   template: (`<div>
     <div *ngFor="#question of props.questions">
@@ -84,13 +84,13 @@ import Flux from 'flux-angular2';
 export default class QuestionListView extends Flux.View {
 }
 ```
-As you can see, this class extends Flux.View and uses the Flux.View.Component annotation.  Flux.View.Component is simply a convenience function
+As you can see, this class extends Flux.View and uses the Flux.View.Component annotation.  Flux.View.component is simply a convenience function
 and is equivalent to angular2/core/Component.
 Now that I've defined the view for displaying questions I'll define the view for adding questions in a file named `QuestionAddView.js`:
 ```JavaScript
 import Flux from 'flux-angular2';
 
-@Flux.View.Component({
+@Flux.View.component({
   selector: 'QuestionAddView',
   template: (`<div>
     <form>
@@ -128,7 +128,7 @@ import Flux from 'flux-angular2';
 import QuestionListView from './questionListView';
 import QuestionAddView from './questionAddView';
 
-@Flux.View.Component({
+@Flux.View.component({
   selector: 'QuestionAppView',
   template: (`<div>
     <QuestionAddView></QuestionAddView>
@@ -313,7 +313,7 @@ Type: `Function`
 
 A convenience property that is the same as calling Page.current.store.dispatch.
 
-#### View.Component
+#### View.component
 Type: `Component`
 
 A convenience property that is the same as angular2/core/Component.

@@ -2,7 +2,7 @@ import Flux from '../../../local/index';
 import CountDisplayView from './countDisplayView';
 import CountIncrementView from './countIncrementView';
 
-@Flux.View.Component({
+@Flux.View.component({
   selector: 'CountApp',
   template: (`<div>
     <CountDisplayView [props.count]="state.count"></CountDisplayView>

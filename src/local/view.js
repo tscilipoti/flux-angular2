@@ -17,19 +17,19 @@ export default class View {
   /**
    * Shortcut to get the angular2 Component class.
    */
-  static get Component() {
+  static get component() {
     return Component;
   }
 
   /**
    * Get the selector for the given component.
-   * @param {Object} component - The component to get the selector from.
+   * @param {Object} comp - The component to get the selector from.
    * @returns {string} The selector for the given component or null if one isn't found.
    */
-  static getSelector(component) {
+  static getSelector(comp) {
     // use reflect
     if (typeof Reflect !== 'undefined') {
-      const annotations = Reflect.getOwnMetadata('annotations', component);
+      const annotations = Reflect.getOwnMetadata('annotations', comp);
       if (annotations && annotations.length) {
         for (let i = 0; i < annotations.length; i++) {
           if (annotations[i].constructor === ComponentMetadata) {
@@ -40,15 +40,15 @@ export default class View {
     }
 
     // fall back if reflect isn't defined
-    if (!component ||
-        !component.prototype ||
-        !component.prototype.constructor ||
-        !component.prototype.constructor.annotations ||
-        !component.prototype.constructor.annotations.length) {
+    if (!comp ||
+        !comp.prototype ||
+        !comp.prototype.constructor ||
+        !comp.prototype.constructor.annotations ||
+        !comp.prototype.constructor.annotations.length) {
       return null;
     }
-    for (let i = 0; i < component.prototype.constructor.annotations.length; i++) {
-      const item = component.prototype.constructor.annotations[i];
+    for (let i = 0; i < comp.prototype.constructor.annotations.length; i++) {
+      const item = comp.prototype.constructor.annotations[i];
       if (item && item.constructor && item.constructor === ComponentMetadata) {
         return item.selector;
       }

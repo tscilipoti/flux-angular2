@@ -1,6 +1,6 @@
 import Flux from '../../../local/index';
 
-@Flux.View.Component({
+@Flux.View.component({
   selector: 'QuestionListView',
   template: (`<div>
     <div *ngFor="#question of props.questions">

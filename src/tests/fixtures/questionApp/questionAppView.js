@@ -2,7 +2,7 @@ import Flux from '../../../local/index';
 import QuestionListView from './questionListView';
 import QuestionAddView from './questionAddView';
 
-@Flux.View.Component({
+@Flux.View.component({
   selector: 'QuestionAppView',
   template: (`<div>
     <QuestionAddView></QuestionAddView>
