@@ -1,5 +1,5 @@
-import { bootstrap } from 'angular2/bootstrap';
 import { enableProdMode, ApplicationRef } from 'angular2/core';
+import { bootstrap } from 'angular2/platform/browser';
 import { createStore } from 'redux';
 import Inspect from './inspect';
 
