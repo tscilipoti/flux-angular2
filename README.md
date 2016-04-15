@@ -29,7 +29,7 @@ Note that you will need to use a bundle and transpiler package to transpile from
 deliver your code to the client which is not shown in the examples.
 
 #### Reducer
-The first to do is define a reducer for my application.  For this example the reducer is simply going to save and retrieve data from 
+The first thing to do is define a reducer for my application.  For this example the reducer is simply going to save and retrieve data from 
 memory but normally there would be some kind of communication with a backend service.
 Below is code that I've put in a file named `questionReducer.js`:
 ```JavaScript
@@ -101,6 +101,14 @@ import Flux from 'flux-angular2';
   </div>`)
 })
 export default class QuestionAddView extends Flux.View {
+
+  constructor() {
+    super();
+
+    // initialize the local state for this view
+    this.state.subject = '';
+    this.state.body = '';
+  }
 
   handleClick() {
     // dispatch an addQuestion event
