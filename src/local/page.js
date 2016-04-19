@@ -18,7 +18,6 @@ export default class Page {
    * Constructor.
    * @param {Object} [options] - Options for this page.
    * @param {String} [options.title] - The title for the page.
-   * @param {String} [options.containerId] - The id of the container the page will be rendered into.  Default is page-body-content.
    * @param {Boolean} [options.isBrowserContext] - When set the value will override the normal check done to detrmine if the page is running in a browser.
    * @param {Boolean} [options.isDevContext] - When set the value will override the normal check done to determine if the page is running in a developer context.
    * @returns {void}
@@ -32,6 +31,16 @@ export default class Page {
     this.mTitle = opts.title || '';
     this.mIsBrowserContext = opts.isBrowserContext;
     this.mIsDevContext = opts.isDevContext;
+
+    this.mViewType = opts.view;
+    if (opts.props) {
+      this.mProps = opts.props;
+    } else if (this.isBrowserContext) {
+      const element = document.getElementById('page-props');
+      this.mProps = (!element || !element.textContent) ? {} : JSON.parse(element.textContent);
+    } else {
+      this.mProps = {};
+    }
   }
 
   /**
@@ -98,7 +107,7 @@ export default class Page {
    * @returns {Object} undefined.
    */
   getView() {
-    return undefined;
+    return this.mViewType;
   }
 
   /**
@@ -106,7 +115,7 @@ export default class Page {
    * @returns {Object} Empty object.
    */
   getProps() {
-    return {};
+    return this.mProps;
   }
 
   /**
@@ -128,8 +137,8 @@ export default class Page {
    * @returns {void}
    */
   handleError(err) {
-    console.error(err.message);
-    console.error(err.stack);
+    console.error(err.message); // eslint-disable-line no-console
+    console.error(err.stack); // eslint-disable-line no-console
   }
 
   /**
@@ -141,6 +150,24 @@ export default class Page {
     if (this.app) {
       this.app.tick();
     }
+  }
+
+  /**
+   * Load the given view.
+   * @param {View} view - The view to load into a page.
+   * @param {Object} props - The properties for the given view.
+   * @param {Object} opts - Any additional options for the page.
+   * @return {Promise} A promise that resolves to the loaded page.
+   */
+  static load(view, props, opts = {}) {
+    const page = new Page({
+      view,
+      props,
+      title: opts.tile,
+      isBrowserContext: opts.isBrowserContext,
+      mIsDevContext: opts.mIsDevContext
+    });
+    return page.load();
   }
 
   /**
@@ -157,12 +184,20 @@ export default class Page {
       }
       this.title = this.mTitle;
       const bootstrap = require('angular2/platform/browser').bootstrap;
-      return bootstrap(this.getView()).then(function (compRef) {
-        self.mView = compRef.instance;
-        self.mApp = compRef.injector.get(ApplicationRef);
-        self.initStore();
+      return new Promise(function (resolve, reject) {
+        bootstrap(self.getView())
+          .then(function (compRef) {
+            self.mView = compRef.instance;
+            self.mApp = compRef.injector.get(ApplicationRef);
+            self.initStore();
+            resolve(self);
+          })
+          .catch(function (err) {
+            reject(err);
+          });
       });
     }
+    return Promise.resolve(this);
   }
 
   /**

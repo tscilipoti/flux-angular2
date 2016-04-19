@@ -37,13 +37,9 @@ import Flux from 'flux-angular2';
 
 export default class QuestionReducer extends Flux.Reducer {
 
-  constructor() {
-    super();
+  constructor(opts) {
+    super(opts);
     this.mQuestionIdNext = 0;
-  }
-
-  initialState() {
-    return [];
   }
 
   actionAddQuestion(state, action) {
@@ -56,8 +52,8 @@ export default class QuestionReducer extends Flux.Reducer {
 }
 ```
 
-As you can see above the QuestionReducer class code is pretty simple.  There is an initalState function which gets called to provide the initial state
-for the reducer.  The name given to the actionAddQuestion function has significance as it begins with the text `action`.  Any function defined in a Reducer class 
+As you can see above the QuestionReducer class code is pretty simple.
+The name given to the actionAddQuestion function has significance as it begins with the text `action`.  Any function defined in a Reducer class 
 that begins with the text action will be called automatically by the dispatcher when the lower camel case version of the text that follows action 
 is set in `type`.
 For my example this function gets executed whenever a dispatch is sent with the action.type set to `addQuestion`.
@@ -132,9 +128,10 @@ defined in Flux.View and references the current singleton instance of the Page c
 #### AppView
 Now that I've defined all of the views I'll need I can create a class that will bring them together to be displayed.  I'll do this with an AppView I'll define in a file named `QuestionAppView.js`:
 ```JavaScript
-import Flux from 'flux-angular2';
+import Flux from '../../../local/index';
 import QuestionListView from './questionListView';
 import QuestionAddView from './questionAddView';
+import QuestionReducer from './questionReducer';
 
 @Flux.View.component({
   selector: 'QuestionAppView',
@@ -147,15 +144,20 @@ import QuestionAddView from './questionAddView';
 })
 export default class QuestionAppView extends Flux.AppView {
 
+  constructor() {
+    super();
+    this.questionReducer = new QuestionReducer({ initialState: this.props.questions });
+  }
+
   reduce(state, action) {
     return {
-      questions: this.props.questionReducer.reduce(state.questions, action)
+      questions: this.questionReducer.reduce(state.questions, action)
     };
   }
 
   initialState() {
     return {
-      questions: this.props.questionReducer.initialState()
+      questions: this.questionReducer.initialState()
     };
   }
 
@@ -166,77 +168,44 @@ export default class QuestionAppView extends Flux.AppView {
 ```
 As you can see the QuestionAppView class extends the Flux.AppView class.
 In this class I've brought together the QuestionAddView and QuestionListView views and I am displaying the one on top of the other.  
-This class also expects a questionReducer property that will be used for reducing calls.
+This class also expects a questions property that will be used used to set the initial state for a question reducer.
 You can see that the storeChanged function is being overridden to update the state with the new collection of questions when the store is changed.
 
 #### Page
 
-Now that I have all the parts needed for my application the last thing to do is to bring it all together within a custom Page class.  
-I'll do this in a file named `QuestionPage.js`:
+Now that I have all the parts needed for my application I can render it into a page.  First I'll use the PageBuilder to generate
+html that will be rendered on the browser.  I will also need to write some code to have my app load when the browser loads the page.
+
+The following is the code needed to generate html for the browser.
 ```JavaScript
-import Flux from 'flux-angular2';
-import QuestionReducer from './questionReducer';
+import PageBuilder from 'flux-angular2/lib/local/pageBuilder';
 import QuestionAppView from './questionAppView';
 
-export default class QuestionPage extends Flux.Page {
-  constructor(options) {
-    super(options);
-    this.mQuestionReducer = new QuestionReducer();
-  }
-
-  getView() {
-    return QuestionAppView;
-  }
-
-  getProps() {
-    return { questionReducer: this.mQuestionReducer };
-  }
-}
+const pb = new PageBuilder();
+pb.scripts = ['<script src="myscripts.js"></script>']; // this would be set with the scripts that load your application
+const html = pb.renderToString(QuestionAppView, { questions: [] });
 ```
-This is all that is needed to define my application.  The last thing to do is to create an instance of the QuestionPage and call the load function like so:
+The value that is held in the html variable is a string that is the rendered value of the QuestionAppView page which would then
+be returned from a server call or maybe written out to an html file to ultimately be loaded into a browser.
+
+This is the code that is needed in order to load the application when the page loads.  It should be included in the scripts
+that are rendered by the PageBuilder class in the example above.
 ```JavaScript
-const page = new QuestionPage();
-page.load();
+import Flux from 'flux-angular2';
+import QuestionAppView from './questionAppView';
+
+Flux.Page.load(QuestionsAppView).then(function (page) {
+  console.log('the page has been loaded');
+});
 ```
-When the page is loaded an istance of the view returned from the getView function will be created and the properties returned from the getProps function will be passed to the newly created view.
-That's all there is to it.  Both the question list and question add views will be displayed and when a user adds a new question it will be immediately displayed.
+The Flux.Page.load function returns a promise that will resolve with the page that has been loaded.
 
 ## API
 
 ### `Page`
 Type: `Class`
 
-Abstract class definition of a page.  
-Page classes aren't used directly but rather custom classes extend the Page class and contain the logic to render content in a client browser.
-Only one instance of a class that extends Page should be loaded at a time or unpredicatable results may occur.
-
-#### Page.constructor(options)
-Type: `Constructor`
-
-The constructor for the page class.  Any classes that extend the Page class should pass the options parameter through.
-
-#### options
-Type: `Object`
-
-Options for the Page class.
-
-##### options.title
-Type: `String`
-
-Optional parameter.  When provided the browser will display the given title.
-
-##### options.isBrowserContext
-Type: `Boolean`
-
-Optional parameter that when defined will indicate if the Page is running within the context of a browser or a server.  By default the Page will
-determine this on it's own but this option can be useful when creating unit tests and you want to override the default behavior.
-
-##### options.isDevContext
-Type: `Boolean`
-
-Optional parameter that when defined will indicate if the Page is running within the development context.  By default the Page will
-determine this on it's own but this option can be useful when creating unit tests and you want to override the default behavior.
-When left to the default the url of the current page is inspected and if there is a dev token in the page name such as 'index.dev.html' then the isDevContext will be true.
+Page objects are created from calls to Page.load which create a new Page instance with the specified View loaded.
 
 #### Page.current
 Type: `Page`
@@ -265,20 +234,43 @@ Type: `String`
 
 This is a property that corresponds to the title displayed in the browser.  It can be both read from and updated.
 
-#### Page.load()
+#### Page.load(view, props, options)
 Type: `Function`
 
-This function is called to load the page into the browser.  It returns a promise that resolves when the page has finished loading.
+This is a static function that creates a new page instance with the given view and loads it.
 
-#### Page.getView()
-Type: `Function`
+##### view
+Type: `View`
 
-Sub classes should override this function to return the view that will be loaded in the page.
+The view to load into the page.
 
-#### Page.getProps()
-Type: `Function`
+##### props
+Type: `Object`
 
-Sub classes should override this function to return the properties that will be loaded in the page.
+The properties for the view that is loaded.
+
+##### options
+Type: `Object`
+
+Options for the Page class.
+
+##### options.title
+Type: `String`
+
+Optional parameter.  When provided the browser will display the given title.
+
+##### options.isBrowserContext
+Type: `Boolean`
+
+Optional parameter that when defined will indicate if the Page is running within the context of a browser or a server.  By default the Page will
+determine this on it's own but this option can be useful when creating unit tests and you want to override the default behavior.
+
+##### options.isDevContext
+Type: `Boolean`
+
+Optional parameter that when defined will indicate if the Page is running within the development context.  By default the Page will
+determine this on it's own but this option can be useful when creating unit tests and you want to override the default behavior.
+When left to the default the url of the current page is inspected and if there is a dev token in the page name such as 'index.dev.html' then the isDevContext will be true.
 
 #### Page.tick()
 Type: `Function`
@@ -361,6 +353,27 @@ It is not intended to be used directly but rather to be extended by other classe
 Classes that override this class can wire up functions to be called when a given action is dispatched.
 Any function that has a name that begins with the text action will be wired up to the corresponding action name.
 
+#### Reducer.constructor(options)
+Type: `Function`
+
+The constructor for reducer classes.
+
+##### options
+Type: `Object`
+
+The options for the reducer.
+
+##### options.initialState
+Type: `Object`
+
+When this is set it will be returned from calls to the initialState function of this class.
+
+#### Reducer.initialState()
+Type: `Function`
+
+This function will return the value passed into the constructor of this class by default.  It can also be overridden
+by sub classes to provide a different behavior.
+
 ### `PageBuilder`
 Type: `Class`
 
@@ -376,13 +389,18 @@ Type: `String or String[]`
 
 A property that contains the script tags that should be included in the page.
 
-#### PageBuilder.renderToString(page)
+#### PageBuilder.renderToString(view, props)
 Type: `Function`
 
 This function generates an HTML string that will load the given page when the page is loaded in a browser.
 In the future this function will generate the rendered output from the page.
 
-##### page
-Type: `Page`
+##### view
+Type: `View`
 
-The page to render.
+The view to render.
+
+##### props
+Type: `Object`
+
+The properties for the view.

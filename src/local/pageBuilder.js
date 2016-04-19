@@ -47,18 +47,21 @@ export default class PageBuilder {
 
   /**
    * Write the given page out to a string.
-   * @param {Page} page - The page to render to string.
+   * @param {View} view - The view to render to string.
+   * @param {Object} props - Optional properties to render.
    * @returns {String} A string representation of the given page.
    */
-  renderToString(page) {
+  renderToString(view, props) {
     const styleSheets = (Array.isArray(this.styleSheets) ? this.styleSheets.join('\n    ') : this.styleSheets) || '';
     const scripts = (Array.isArray(this.scripts) ? this.scripts.join('\n    ') : this.scripts) || '';
-    const selector = (page ? View.getSelector(page.getView()) : 'div');
+    const selector = (view ? View.getSelector(view) : 'div');
+    const propTag = (props ? '<script id="page-props" type="application/json">' + JSON.stringify(props) + '</script>' : '');
 
     return `<!DOCTYPE HTML>
 <html>
   <head>
     ${styleSheets}
+    ${propTag}
     ${scripts}
   </head>
   <body>

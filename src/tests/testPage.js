@@ -1,7 +1,7 @@
-/* eslint-env node, mocha */
-import SimplePage from './fixtures/simpleApp/simplePage';
-import CountPage from './fixtures/countApp/countPage';
-import QuestionPage from './fixtures/questionApp/questionPage';
+import Flux from '../local/index';
+import DetailView from './fixtures/simpleApp/detailView';
+import CountAppView from './fixtures/countApp/countAppView';
+import QuestionAppView from './fixtures/questionApp/questionAppView';
 import PageBuilder from '../local/pageBuilder';
 import * as jsdom from 'jsdom';
 import * as assert from 'assert';
@@ -12,10 +12,9 @@ import * as assert from 'assert';
 describe('Page', function () {
   it('Simple page renders as expected.', function (done) {
     const pb = new PageBuilder();
-    const page = new SimplePage();
-    global.document = jsdom.jsdom(pb.renderToString(page));
+    global.document = jsdom.jsdom(pb.renderToString(DetailView));
 
-    page.load().then(function () {
+    Flux.Page.load(DetailView).then(function () {
       const span = document.querySelector('span');
       assert.ok(span, 'could not find span element');
       assert.equal(span.innerHTML, 'Details', 'span does not have correct value');
@@ -27,10 +26,9 @@ describe('Page', function () {
 
   it('Page with events renders and behaves as expected.', function (done) {
     const pb = new PageBuilder();
-    const page = new CountPage();
-    global.document = jsdom.jsdom(pb.renderToString(page));
+    global.document = jsdom.jsdom(pb.renderToString(CountAppView, { count: 0 }));
 
-    page.load().then(function () {
+    Flux.Page.load(CountAppView).then(function (page) {
       page.tick();
       let displayCount = document.querySelector('#countDisplay');
       const incrementCount = document.querySelector('#countIncrement');
@@ -56,10 +54,9 @@ describe('Page', function () {
 
   it('QuestionPage renders and behaves as expected.', function (done) {
     const pb = new PageBuilder();
-    const page = new QuestionPage();
-    global.document = jsdom.jsdom(pb.renderToString(page));
+    global.document = jsdom.jsdom(pb.renderToString(QuestionAppView, { questions: [] }));
 
-    page.load().then(function () {
+    Flux.Page.load(QuestionAppView, { questions: [] }).then(function (page) {
       page.tick();
       let questionSize = document.querySelector('#questionSize');
       const questionAdd = document.querySelector('#questionAdd');

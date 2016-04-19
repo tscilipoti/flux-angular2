@@ -1,6 +1,7 @@
 import Flux from '../../../local/index';
 import QuestionListView from './questionListView';
 import QuestionAddView from './questionAddView';
+import QuestionReducer from './questionReducer';
 
 @Flux.View.component({
   selector: 'QuestionAppView',
@@ -13,15 +14,20 @@ import QuestionAddView from './questionAddView';
 })
 export default class QuestionAppView extends Flux.AppView {
 
+  constructor() {
+    super();
+    this.questionReducer = new QuestionReducer({ initialState: this.props.questions });
+  }
+
   reduce(state, action) {
     return {
-      questions: this.props.questionReducer.reduce(state.questions, action)
+      questions: this.questionReducer.reduce(state.questions, action)
     };
   }
 
   initialState() {
     return {
-      questions: this.props.questionReducer.initialState()
+      questions: this.questionReducer.initialState()
     };
   }
 

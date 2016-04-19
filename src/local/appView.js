@@ -11,7 +11,6 @@ export default class AppView extends View {
   constructor() {
     super();
     this.props = this.page.getProps();
-    this.state = this.initialState();
   }
 
   /**
@@ -48,5 +47,14 @@ export default class AppView extends View {
       return this.page.store.getState();
     }
     return this.reduce(undefined, { type: null });
+  }
+
+  /**
+   * Set the state after ng init.
+   * @return {void}
+   */
+  ngOnInit() {
+    super();
+    this.state = this.initialState();
   }
 }

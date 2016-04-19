@@ -7,8 +7,11 @@ export default class Reducer {
 
   /**
    * @constructor
+   * @param {Object} opts - Options for this class.
+   * @param {Object} opts.initialState - The initial state for the class.
    */
-  constructor() {
+  constructor(opts = {}) {
+    this.mInitialState = opts.initialState || {};
     this.initActionRouter();
   }
 
@@ -30,7 +33,7 @@ export default class Reducer {
    * @returns {Object} An empty object.
    */
   initialState() {
-    return {};
+    return this.mInitialState;
   }
 
   /**

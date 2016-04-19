@@ -1,6 +1,7 @@
 import Flux from '../../../local/index';
 import CountDisplayView from './countDisplayView';
 import CountIncrementView from './countIncrementView';
+import CountReducer from './countReducer';
 
 @Flux.View.component({
   selector: 'CountApp',
@@ -12,9 +13,13 @@ import CountIncrementView from './countIncrementView';
   directives: [CountDisplayView, CountIncrementView]
 })
 class CountApp extends Flux.AppView {
+  constructor() {
+    super();
+    this.countReducer = new CountReducer({ initialState: this.props.count });
+  }
 
   reduce(state, action) {
-    const result = { count: this.props.countReducer.reduce(state.count, action) };
+    const result = { count: this.countReducer.reduce(state.count, action) };
     return result;
   }
 
