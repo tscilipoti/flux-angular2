@@ -1,4 +1,5 @@
 import Inspect from './inspect';
+import Page from './page';
 
 /**
  * Base class for stores.
@@ -13,6 +14,22 @@ export default class Reducer {
   constructor(opts = {}) {
     this.mInitialState = opts.initialState || {};
     this.initActionRouter();
+  }
+
+  /**
+   * Get the page associated with this reducer.
+   */
+  get page() {
+    return Page.current;
+  }
+
+  /**
+   * Dispatch an action to the page store.
+   * @param {Object} action - The action to dispatch.
+   * @returns {void}
+   */
+  dispatch(action) {
+    this.page.store.dispatch(action);
   }
 
   /**
