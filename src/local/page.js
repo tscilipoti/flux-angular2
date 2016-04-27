@@ -177,7 +177,7 @@ export default class Page {
    */
   navigate(url) {
     if (this.isBrowserContext && window.location) {
-      window.location.url = url;
+      window.location.href = url;
     }
   }
 
