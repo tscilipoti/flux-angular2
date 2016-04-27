@@ -244,6 +244,16 @@ Type: `Storage`
 
 The storage object for the client.
 
+#### Page.navigate(url)
+Type: `Function`
+
+Navigate to the given url when in the browser context.  If not in the browser context this function will have no effect.
+
+##### url
+Type: `String`
+
+The url to navigate to.
+
 #### Page.load(view, props, options)
 Type: `Function`
 

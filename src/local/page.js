@@ -171,6 +171,17 @@ export default class Page {
   }
 
   /**
+   * Navigate to the given url.  If the page isn't in the browser context then this function has no effect.
+   * @param {String} url - The url to navigate to.
+   * @return {void}
+   */
+  navigate(url) {
+    if (this.isBrowserContext && window.location) {
+      window.location.url = url;
+    }
+  }
+
+  /**
    * Load the given view.
    * @param {View} view - The view to load into a page.
    * @param {Object} props - The properties for the given view.
