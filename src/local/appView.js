@@ -31,6 +31,19 @@ export default class AppView extends View {
   }
 
   /**
+   * Copy the initial state over into the local state.
+   * @return {void}
+   */
+  copyInitialState() {
+    const initState = this.initialState();
+    for (const propName in initState) {
+      if (initState.hasOwnProperty(propName)) {
+        this.state[propName] = initState[propName];
+      }
+    }
+  }
+
+  /**
    * Called from Page when this is the root level component and the store has been changed.
    * Override this function in sub classes with necessary logic.
    * @returns {void}
@@ -47,14 +60,5 @@ export default class AppView extends View {
       return this.page.store.getState();
     }
     return this.reduce(undefined, { type: null });
-  }
-
-  /**
-   * Set the state after ng init.
-   * @return {void}
-   */
-  ngOnInit() {
-    super.ngOnInit();
-    this.state = this.initialState();
   }
 }

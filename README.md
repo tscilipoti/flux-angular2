@@ -147,6 +147,7 @@ export default class QuestionAppView extends Flux.AppView {
   constructor() {
     super();
     this.questionReducer = new QuestionReducer({ initialState: this.props.questions });
+    this.copyInitialState(); // copy the values in the object returned by initalState() into the this.state object
   }
 
   reduce(state, action) {
@@ -359,6 +360,12 @@ This is called by the Redux package to get the initial state when the page is lo
 Type: `Function`
 
 This function is called after an action has been dispatched and the state changed.
+
+#### AppView.copyInitialState()
+Type: `Function`
+
+When this function is called it will copy all of the properties over from the object returned by the initialState function into
+the object in the state property.
 
 ### AppView.storeState
 Type: `Object`

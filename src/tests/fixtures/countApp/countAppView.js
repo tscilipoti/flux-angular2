@@ -16,11 +16,13 @@ class CountApp extends Flux.AppView {
   constructor() {
     super();
     this.countReducer = new CountReducer({ initialState: this.props.count });
+    this.copyInitialState();
   }
 
   reduce(state, action) {
-    const result = { count: this.countReducer.reduce(state.count, action) };
-    return result;
+    return {
+      count: this.countReducer.reduce(state.count, action)
+    };
   }
 
   initialState() {

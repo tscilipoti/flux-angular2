@@ -17,6 +17,7 @@ export default class QuestionAppView extends Flux.AppView {
   constructor() {
     super();
     this.questionReducer = new QuestionReducer({ initialState: this.props.questions });
+    this.copyInitialState();
   }
 
   reduce(state, action) {
