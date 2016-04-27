@@ -234,6 +234,16 @@ Type: `String`
 
 This is a property that corresponds to the title displayed in the browser.  It can be both read from and updated.
 
+#### Page.sessionStorage
+Type: `Storage`
+
+The storage object for the session.
+
+#### Page.localStorage
+Type: `Storage`
+
+The storage object for the client.
+
 #### Page.load(view, props, options)
 Type: `Function`
 

@@ -2,6 +2,7 @@ require('reflect-metadata');
 import { enableProdMode, ApplicationRef } from 'angular2/core';
 import { createStore } from 'redux';
 import Inspect from './inspect';
+import * as FakeStorage from 'fake-storage'; 
 
 // A singleton instance of Page.
 let currentPage = null;
@@ -31,6 +32,9 @@ export default class Page {
     this.mTitle = opts.title || '';
     this.mIsBrowserContext = opts.isBrowserContext;
     this.mIsDevContext = opts.isDevContext;
+
+    this.mLocalStorage = (this.isBrowserContext && window.localStorage) ? window.localStorage : new FakeStorage();
+    this.mSessionStorage = (this.isBrowserContext && window.sessionStorage) ? window.sessionStorage : new FakeStorage();
 
     this.mViewType = opts.view;
     if (opts.props) {
@@ -100,6 +104,20 @@ export default class Page {
       return document.title;
     }
     return this.mTitle;
+  }
+
+  /**
+   * The session storage object.
+   */
+  get sessionStorage() {
+    return this.mSessionStorage;
+  }
+
+  /**
+   * The local storage object.
+   */
+  get localStorage() {
+    return this.mLocalStorage;
   }
 
   /**

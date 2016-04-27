@@ -1,5 +1,6 @@
 import Page from './page';
 import { Component, ComponentMetadata } from 'angular2/core';
+import { RouteConfig, ROUTER_DIRECTIVES } from 'angular2/router';
 
 /**
  * A view on the page.
@@ -19,6 +20,20 @@ export default class View {
    */
   static get component() {
     return Component;
+  }
+
+  /**
+   * Shortcut to get the angular2 RouteConfig class.
+   */
+  static get routeConfig() {
+    return RouteConfig;
+  }
+
+  /**
+   * Shortcut to get the angular2 ROUTER_DIRECTIVES object.
+   */
+  static get routerDirectives() {
+    return ROUTER_DIRECTIVES;
   }
 
   /**
