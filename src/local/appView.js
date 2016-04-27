@@ -54,7 +54,7 @@ export default class AppView extends View {
    * @return {void}
    */
   ngOnInit() {
-    super();
+    super.ngOnInit();
     this.state = this.initialState();
   }
 }
