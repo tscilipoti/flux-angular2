@@ -1,5 +1,5 @@
 import Page from './page';
-import { Component, ComponentMetadata, EventEmitter } from 'angular2/core';
+import { Component, ComponentMetadata } from 'angular2/core';
 import { RouteConfig, ROUTER_DIRECTIVES } from 'angular2/router';
 
 /**
@@ -34,13 +34,6 @@ export default class View {
    */
   static get routerDirectives() {
     return ROUTER_DIRECTIVES;
-  }
-
-  /**
-   * Shortcut to get the event emitter class.
-   */
-  static get EventEmitter() {
-    return EventEmitter;
   }
 
   /**
