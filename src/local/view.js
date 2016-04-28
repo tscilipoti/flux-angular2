@@ -116,4 +116,11 @@ export default class View {
    */
   onDestroy() {
   }
+
+  /**
+   * Called by the page after everything has been loaded.
+   * @returns {void}
+   */
+  onLoad() {
+  }
 }

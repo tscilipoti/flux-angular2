@@ -324,6 +324,11 @@ Type: `Function`
 
 This function is called by the framework when the view has been initialized.
 
+#### View.onLoad()
+Type: `Function`
+
+This function is called by the page after everything has finished being loaded.
+
 #### View.onDestroy()
 Type: `Function`
 

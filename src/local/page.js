@@ -219,6 +219,9 @@ export default class Page {
             self.mView = compRef.instance;
             self.mApp = compRef.injector.get(ApplicationRef);
             self.initStore();
+            if (self.mView.onLoad) {
+              self.mView.onLoad();
+            }
             resolve(self);
           })
           .catch(function (err) {
