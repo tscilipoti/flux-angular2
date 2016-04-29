@@ -200,6 +200,20 @@ export default class Page {
   }
 
   /**
+   * This function calls the static load method but only when in the browser context.
+   * @param {View} view - The view to load into a page.
+   * @param {Object} props - The properties for the given view.
+   * @param {Object} opts - Any additional options for the page.
+   * @return {Promise} A promise that resolves to the loaded page.
+   */
+  static bootstrap(view, props, opts) {
+    if (Inspect.isBrowserContext()) {
+      return Page.load(view, props, opts);
+    }
+    return Promise.resolve(null);
+  }
+
+  /**
    * This should be called after the page is created and it's ready to be displayed.
    * @returns {Promise} A promise that resolves when the page is done loading.
    */

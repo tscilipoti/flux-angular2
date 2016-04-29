@@ -293,6 +293,11 @@ Optional parameter that when defined will indicate if the Page is running within
 determine this on it's own but this option can be useful when creating unit tests and you want to override the default behavior.
 When left to the default the url of the current page is inspected and if there is a dev token in the page name such as 'index.dev.html' then the isDevContext will be true.
 
+#### Page.bootstrap(view, props, options)
+Type: `Function`
+
+This function calls the static load method but only when in the browser context.  All of the parameters are passed through.
+
 #### Page.tick()
 Type: `Function`
 
