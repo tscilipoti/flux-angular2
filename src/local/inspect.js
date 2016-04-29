@@ -65,4 +65,28 @@ export default class Inspect {
 
     return result;
   }
+
+  /**
+   * Creates a shallow clone of the source object.
+   * @param {Object} source - The source to clone from.
+   * @param {Object} values - Optional values to included in the cloned copy.
+   * @return {Object} The clone of the given object.
+   */
+  static clone(source, values) {
+    const result = {};
+    if (source) {
+      for (const propName in source) {
+        if (source.hasOwnProperty(propName)) {
+          result[propName] = source[propName];
+        }
+      }
+    }
+    if (values) {
+      for (const propName in values) {
+        if (values.hasOwnProperty(propName)) {
+          result[propName] = values[propName];
+        }
+      }
+    }
+  }
 }

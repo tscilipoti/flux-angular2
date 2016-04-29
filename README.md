@@ -400,6 +400,21 @@ Type: `Object`
 
 When this is set it will be returned from calls to the initialState function of this class.
 
+#### Reducer.clone(source, values)
+Type: `Function`
+
+This function will create a shallow copy of the source parameter.
+
+##### source
+Type: `Object`
+
+The object to clone.
+
+##### values
+Type: `Object`
+
+Optional values to copy into the cloned result.
+
 #### Reducer.initialState()
 Type: `Function`
 

@@ -24,6 +24,16 @@ export default class Reducer {
   }
 
   /**
+   * Creates a shallow clone of the source object.
+   * @param {Object} source - The source to clone from.
+   * @param {Object} values - Optional values to included in the cloned copy.
+   * @return {Object} The clone of the given object.
+   */
+  clone(source, values) {
+    return Inspect.clone(source, values);
+  }
+
+  /**
    * Dispatch an action to the page store.
    * @param {Object} action - The action to dispatch.
    * @returns {void}
