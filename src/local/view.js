@@ -13,6 +13,9 @@ export default class View {
   constructor() {
     this.state = {};
     this.props = {};
+    this.page.registerLoad(function () {
+      this.onLoad();
+    }.bind(this));
   }
 
   /**

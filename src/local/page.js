@@ -32,6 +32,7 @@ export default class Page {
     this.mTitle = opts.title || '';
     this.mIsBrowserContext = opts.isBrowserContext;
     this.mIsDevContext = opts.isDevContext;
+    this.mLoadRegister = [];
 
     this.mLocalStorage = (this.isBrowserContext && window.localStorage) ? window.localStorage : new FakeStorage();
     this.mSessionStorage = (this.isBrowserContext && window.sessionStorage) ? window.sessionStorage : new FakeStorage();
@@ -171,6 +172,27 @@ export default class Page {
   }
 
   /**
+   * Register a function that will be called when the page is loaded.
+   * @param {Function} func - The function that will be called when the page has been loaded.
+   * @return {void}
+   */
+  registerLoad(func) {
+    this.mLoadRegister.push(func);
+  }
+
+  /**
+   * Execute each function that was registered with registerLoad function and then
+   * remove them from the register.
+   * @return {void}
+   */
+  executeLoads() {
+    this.mLoadRegister.forEach(func => {
+      func();
+    });
+    this.mLoadRegister = [];
+  }
+
+  /**
    * Navigate to the given url.  If the page isn't in the browser context then this function has no effect.
    * @param {String} url - The url to navigate to.
    * @return {void}
@@ -233,9 +255,7 @@ export default class Page {
             self.mView = compRef.instance;
             self.mApp = compRef.injector.get(ApplicationRef);
             self.initStore();
-            if (self.mView.onLoad) {
-              self.mView.onLoad();
-            }
+            self.executeLoads();
             resolve(self);
           })
           .catch(function (err) {

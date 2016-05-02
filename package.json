@@ -1,6 +1,6 @@
 {
   "name": "flux-angular2",
-  "version": "1.0.36",
+  "version": "1.0.37",
   "description": "A client framework implementation of the flux pattern.",
   "main": "lib/local/index.js",
   "scripts": {
