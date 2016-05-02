@@ -29,6 +29,7 @@ export default class Page {
 
     this.mIsInitialized = false;
     this.mIsLoaded = false;
+    this.mTickRunning = false;
 
     this.mTitle = opts.title || '';
     this.mIsBrowserContext = opts.isBrowserContext;
@@ -174,8 +175,13 @@ export default class Page {
    * @returns {void}
    */
   tick() {
-    if (this.app) {
-      this.app.tick();
+    if (this.app && !this.mTickRunning) {
+      this.mTickRunning = true;
+      try {
+        this.app.tick();
+      } finally {
+        this.mTickRunning = false;
+      }
     }
   }
 
