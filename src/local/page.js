@@ -32,7 +32,7 @@ export default class Page {
     this.mTitle = opts.title || '';
     this.mIsBrowserContext = opts.isBrowserContext;
     this.mIsDevContext = opts.isDevContext;
-    this.mLoadRegister = [];
+    this.mViewLoads = [];
 
     this.mLocalStorage = (this.isBrowserContext && window.localStorage) ? window.localStorage : new FakeStorage();
     this.mSessionStorage = (this.isBrowserContext && window.sessionStorage) ? window.sessionStorage : new FakeStorage();
@@ -173,23 +173,25 @@ export default class Page {
 
   /**
    * Register a function that will be called when the page is loaded.
-   * @param {Function} func - The function that will be called when the page has been loaded.
+   * @param {View} view - The view that will be called when the page has been loaded.
    * @return {void}
    */
-  registerLoad(func) {
-    this.mLoadRegister.push(func);
+  registerLoad(view) {
+    this.mViewLoads.push(view);
   }
 
   /**
-   * Execute each function that was registered with registerLoad function and then
+   * Execute each onLoad function on each view that was registered with registerLoad function and then
    * remove them from the register.
    * @return {void}
    */
   executeLoads() {
-    this.mLoadRegister.forEach(func => {
-      func();
+    this.mViewLoads.forEach(view => {
+      if (view.onLoad) {
+        view.onLoad();
+      }
     });
-    this.mLoadRegister = [];
+    this.mViewLoads = [];
   }
 
   /**
