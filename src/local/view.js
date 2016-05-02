@@ -94,6 +94,9 @@ export default class View {
    */
   ngOnInit() {
     this.onInit();
+    if (this.page.isLoaded) {
+      this.onLoad();
+    }
   }
 
   /**

@@ -28,6 +28,7 @@ export default class Page {
     const opts = options || {};
 
     this.mIsInitialized = false;
+    this.mIsLoaded = false;
 
     this.mTitle = opts.title || '';
     this.mIsBrowserContext = opts.isBrowserContext;
@@ -95,6 +96,13 @@ export default class Page {
       return this.mIsDevContext;
     }
     return Inspect.isDevContext();
+  }
+
+  /**
+   * After the page has been loaded this returns true.
+   */
+  get isLoaded() {
+    return this.mIsLoaded;
   }
 
   /**
@@ -177,7 +185,9 @@ export default class Page {
    * @return {void}
    */
   registerLoad(view) {
-    this.mViewLoads.push(view);
+    if (!this.isLoaded) {
+      this.mViewLoads.push(view);
+    }
   }
 
   /**
@@ -258,6 +268,7 @@ export default class Page {
             self.mApp = compRef.injector.get(ApplicationRef);
             self.initStore();
             self.executeLoads();
+            self.mIsLoaded = true;
             resolve(self);
           })
           .catch(function (err) {
