@@ -1,4 +1,6 @@
+import Page from './page';
 import View from './view';
+import * as JSDOM from 'jsdom';
 
 /**
  * Class used to build html output for pages.
@@ -68,5 +70,69 @@ export default class PageBuilder {
     <${selector}></${selector}>
   </body>
 </html>`;
+  }
+
+  /**
+   * Load the given view and then render it into a jsdom document object for unit testing.
+   * @param {Object} opts - The options for the function.
+   * @param {View} opts.view - The view to load and render.
+   * @param {Object} opts.props - Properties for the view.
+   * @param {Array | String} opts.styleSheets - The stylesheets for the document.
+   * @param {Array | String} opts.scripts - The script tags for the document.
+   * @return {Document} A document object that contains the rendered output from the view.
+   */
+  static renderToDocument(opts = {}) {
+    const pb = new PageBuilder();
+    pb.styleSheets = opts.styleSheets;
+    pb.scripts = opts.scripts;
+    return JSDOM.jsdom(pb.renderToString(opts.view, opts.props));
+  }
+
+  /**
+   * Render and load the given view for testing.
+   * @param {View} view - The view to load.
+   * @param {Object} props - The properties for the view.
+   * @return {Promise} A promise that resolves with the loaded page.
+   */
+  static test(view, props) {
+    global.document = PageBuilder.renderToDocument({ view, props });
+    return Page.load(view, props);
+  }
+
+  /**
+   * Initialize test environment.  Should be called once, before any tests are run.
+   * @return {void}
+   */
+  static testSetup() {
+    // setup the simplest document possible
+    const doc = JSDOM.jsdom('<!doctype html><html><body id="page-body-content"><HostView>Loading...</HostView></div></body></html>');
+
+    // get the window object out of the document
+    const win = doc.defaultView;
+
+    // workaround for zone.js
+    global.XMLHttpRequest = function () {};
+    global.XMLHttpRequest.prototype.send = function () {};
+
+    // defines angular2 dependencies
+    require('./init');
+
+    // set globals for mocha that make access to document and window feel
+    // natural in the test environment
+    global.document = doc;
+    global.window = win;
+
+    // take all properties of the window object and also attach it to the
+    // mocha global object
+    for (const key in win) {
+      if (!window.hasOwnProperty(key)) continue;
+      if (key in global) continue;
+
+      global[key] = window[key];
+    }
+
+    // setup angular2 shims
+    window.Reflect = global.Reflect;
+    window.requestAnimationFrame = function () {};
   }
 }
