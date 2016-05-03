@@ -10,7 +10,7 @@ const test = require('build-test');
 const transform = require('build-transform');
 
 lint.registerTasks({
-  glob: ['src/**/*.js', '!src/public/**/*', '!src/styles/**/*']
+  glob: ['src/**/*.js', '!src/public/**/*', '!src/styles/**/*', '!src/tests/fixtures/**/*']
 });
 
 test.registerTasks({

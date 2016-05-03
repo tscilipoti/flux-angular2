@@ -90,13 +90,34 @@ export default class PageBuilder {
 
   /**
    * Render and load the given view for testing.
-   * @param {View} view - The view to load.
-   * @param {Object} props - The properties for the view.
+   * @param {Object} opts - Options for the function.
+   * @param {View} opts.view - The view to load.
+   * @param {Object} opts.props - The properties for the view.
+   * @param {Object} opts.sessionStorage - The values for the session storage.
+   * @param {Object} opts.localStorage - The values for the local storage.
    * @return {Promise} A promise that resolves with the loaded page.
    */
-  static test(view, props) {
-    global.document = PageBuilder.renderToDocument({ view, props });
-    return Page.load(view, props);
+  static test(opts = {}) {
+    Page.localStorage.clear();
+    Page.sessionStorage.clear();
+
+    if (opts.sessionStorage) {
+      for (const propName in opts.sessionStorage) {
+        if (opts.sessionStorage.hasOwnProperty(propName)) {
+          Page.sessionStorage.setItem(propName, opts.sessionStorage[propName]);
+        }
+      }
+    }
+    if (opts.localStorage) {
+      for (const propName in opts.localStorage) {
+        if (opts.localStorage.hasOwnProperty(propName)) {
+          Page.localStorage.setItem(propName, opts.localStorage[propName]);
+        }
+      }
+    }
+
+    global.document = PageBuilder.renderToDocument(opts);
+    return Page.load(opts.view, opts.props);
   }
 
   /**

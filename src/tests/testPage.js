@@ -1,9 +1,7 @@
-import Flux from '../local/index';
 import DetailView from './fixtures/simpleApp/detailView';
 import CountAppView from './fixtures/countApp/countAppView';
 import QuestionAppView from './fixtures/questionApp/questionAppView';
 import PageBuilder from '../local/pageBuilder';
-import * as jsdom from 'jsdom';
 import * as assert from 'assert';
 
 /**
@@ -11,7 +9,7 @@ import * as assert from 'assert';
  */
 describe('Page', function () {
   it('Simple page renders as expected.', function (done) {
-    PageBuilder.test(DetailView)
+    PageBuilder.test({ view: DetailView })
       .then(function () {
         const span = document.querySelector('span');
         assert.ok(span, 'could not find span element');
@@ -24,7 +22,11 @@ describe('Page', function () {
   });
 
   it('Page with events renders and behaves as expected.', function (done) {
-    PageBuilder.test(CountAppView)
+    PageBuilder.test({
+      view: CountAppView,
+      sessionStorage: { example: 'hello' },
+      localStorage: { text: 'world' }
+    })
       .then(function (page) {
         page.tick();
         let displayCount = document.querySelector('#countDisplay');
@@ -51,7 +53,7 @@ describe('Page', function () {
   });
 
   it('QuestionPage renders and behaves as expected.', function (done) {
-    PageBuilder.test(QuestionAppView, { questions: [] })
+    PageBuilder.test({ view: QuestionAppView, props: { questions: [] } })
       .then(function (page) {
         page.tick();
         let questionSize = document.querySelector('#questionSize');

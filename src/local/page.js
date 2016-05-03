@@ -2,13 +2,17 @@ require('reflect-metadata');
 import { enableProdMode, ApplicationRef } from 'angular2/core';
 import { createStore } from 'redux';
 import Inspect from './inspect';
-import * as FakeStorage from 'fake-storage'; 
+import * as FakeStorage from 'fake-storage';
 
 // A singleton instance of Page.
 let currentPage = null;
 
 // set to true after angular2 has been initialized.
 let ngInit = false;
+
+// holds storages
+const pageSessionStorage = (typeof window !== 'undefined' && window.sessionStorage) ? window.sessionStorage : new FakeStorage();
+const pageLocalStorage = (typeof window !== 'undefined' && window.localStorage) ? window.localStorage : new FakeStorage();
 
 /**
  * Abstract definition of a page.
@@ -35,9 +39,6 @@ export default class Page {
     this.mIsBrowserContext = opts.isBrowserContext;
     this.mIsDevContext = opts.isDevContext;
     this.mViewLoads = [];
-
-    this.mLocalStorage = (this.isBrowserContext && window.localStorage) ? window.localStorage : new FakeStorage();
-    this.mSessionStorage = (this.isBrowserContext && window.sessionStorage) ? window.sessionStorage : new FakeStorage();
 
     this.mViewType = opts.view;
     if (opts.props) {
@@ -119,15 +120,29 @@ export default class Page {
   /**
    * The session storage object.
    */
+  static get sessionStorage() {
+    return pageSessionStorage;
+  }
+
+  /**
+   * The session storage object.
+   */
   get sessionStorage() {
-    return this.mSessionStorage;
+    return Page.sessionStorage;
+  }
+
+  /**
+   * The local storage object.
+   */
+  static get localStorage() {
+    return pageLocalStorage;
   }
 
   /**
    * The local storage object.
    */
   get localStorage() {
-    return this.mLocalStorage;
+    return Page.localStorage;
   }
 
   /**

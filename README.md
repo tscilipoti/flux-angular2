@@ -456,3 +456,28 @@ The view to render.
 Type: `Object`
 
 The properties for the view.
+
+#### PageBuilder.test(opts)
+Type: `Function`
+
+This function is used to help with unit testing of pages.  It returns a promies that resolves with the loaded page.
+
+##### opts.view
+Type: `View`
+
+The view to load for testing.
+
+##### opts.props
+Type: `Object`
+
+The properties for the loaded view.
+
+##### opts.sessionStorage
+Type: `Object`
+
+Values to set for session storage.
+
+##### opts.localStorage
+Type: `Object`
+
+Values to set for local storage.
