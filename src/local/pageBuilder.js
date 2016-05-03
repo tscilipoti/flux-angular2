@@ -118,7 +118,7 @@ export default class PageBuilder {
     }
 
     global.document = PageBuilder.renderToDocument(opts);
-    return Page.load(opts.view, opts.props);
+    return Page.load(opts.view, opts.props, { storeListener: opts.storeListener });
   }
 
   /**

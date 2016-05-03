@@ -27,6 +27,7 @@ export default class Page {
    * @param {Object} [options.props] - The properties for the page.
    * @param {Boolean} [options.isBrowserContext] - When set the value will override the normal check done to detrmine if the page is running in a browser.
    * @param {Boolean} [options.isDevContext] - When set the value will override the normal check done to determine if the page is running in a developer context.
+   * @param {Function} [option.storeListener] - When set this function will be called when the store is changed.
    * @returns {void}
    */
   constructor(options) {
@@ -40,6 +41,7 @@ export default class Page {
     this.mTitle = opts.title || '';
     this.mIsBrowserContext = opts.isBrowserContext;
     this.mIsDevContext = opts.isDevContext;
+    this.mStoreListener = opts.storeListener;
     this.mViewLoads = [];
 
     this.mViewType = opts.view;
@@ -251,7 +253,8 @@ export default class Page {
       props,
       isBrowserContext: Inspect.isBrowserContext(),
       isDevContext: Inspect.isDevContext(),
-      title: opts.title
+      title: opts.title,
+      storeListener: opts.storeListener
     });
     return page.load();
   }
@@ -321,14 +324,25 @@ export default class Page {
    * @returns {Object} The new state.
    */
   storeReducer(state, action) {
+    let result = state;
     try {
       if (action.type === '@@redux/INIT') {
-        return (!this.view || !this.view.initialState) ? {} : this.view.initialState();
+        result = (!this.view || !this.view.initialState) ? {} : this.view.initialState();
+      } else if (!this.view || !this.view.reduce) {
+        result = state;
+      } else {
+        result = this.view.reduce(state, action);
       }
-      if (!this.view || !this.view.reduce) {
-        return state;
+
+      if (this.mStoreListener) {
+        this.mStoreListener({
+          before: state,
+          after: result,
+          action
+        });
       }
-      return this.view.reduce(state, action);
+
+      return result;
     } catch (err) {
       this.handleError(err);
       return state;
