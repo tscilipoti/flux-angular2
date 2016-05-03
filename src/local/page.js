@@ -28,6 +28,7 @@ export default class Page {
    * @param {Boolean} [options.isBrowserContext] - When set the value will override the normal check done to detrmine if the page is running in a browser.
    * @param {Boolean} [options.isDevContext] - When set the value will override the normal check done to determine if the page is running in a developer context.
    * @param {Function} [option.storeListener] - When set this function will be called when the store is changed.
+   * @param {Object} [option.reducer] - When set this will override existing reducers and return the state defined.
    * @returns {void}
    */
   constructor(options) {
@@ -42,6 +43,7 @@ export default class Page {
     this.mIsBrowserContext = opts.isBrowserContext;
     this.mIsDevContext = opts.isDevContext;
     this.mStoreListener = opts.storeListener;
+    this.mReducer = opts.reducer;
     this.mViewLoads = [];
 
     this.mViewType = opts.view;
@@ -254,7 +256,8 @@ export default class Page {
       isBrowserContext: Inspect.isBrowserContext(),
       isDevContext: Inspect.isDevContext(),
       title: opts.title,
-      storeListener: opts.storeListener
+      storeListener: opts.storeListener,
+      reducer: opts.reducer
     });
     return page.load();
   }
@@ -325,19 +328,33 @@ export default class Page {
    */
   storeReducer(state, action) {
     let result = state;
+    let isOverride = false;
     try {
-      if (action.type === '@@redux/INIT') {
+      // override reducer if enabled
+      if (this.mReducer && this.mReducer[action.type]) {
+        isOverride = true;
+        if (typeof this.mReducer[action.type] === 'function') {
+          result = this.mReducer[action.type](state, action);
+        } else {
+          result = Inspect.clone(state, this.mReducer[action.type]);
+        }
+      // initial state
+      } else if (action.type === '@@redux/INIT') {
         result = (!this.view || !this.view.initialState) ? {} : this.view.initialState();
+      // if there isn't a reducer just return the state
       } else if (!this.view || !this.view.reduce) {
         result = state;
+      // get state from the view
       } else {
         result = this.view.reduce(state, action);
       }
 
+      // notify listeners of a state change
       if (this.mStoreListener) {
         this.mStoreListener({
           before: state,
           after: result,
+          isOverride,
           action
         });
       }

@@ -468,3 +468,19 @@ Values to set for session storage.
 Type: `Object`
 
 Values to set for local storage.
+
+##### opts.storeListener
+Type: `Function`
+
+A function that gets called whenever there is a reducing event.  This function will be passed that will have the following properties:
+- action: The action that has occured.
+- before: The state object before the action is reduced.
+- after: The state object after the action is reduced.
+- isOverride: Flag that indicates if the reducer was overridden.
+
+##### opts.reducer
+Type: `Object`
+
+When this is set to an object it will override reducing actions.  Set a property on this object to the same name as an action.type
+and it will be used instead of the normal reducing function.  The property can be a reducing function or an object which will
+be merged with the current state.
