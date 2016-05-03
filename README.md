@@ -255,7 +255,7 @@ Type: `String`
 
 The url to navigate to.
 
-#### Page.load(view, props)
+#### Page.load(view, props, opts)
 Type: `Function`
 
 This is a static function that creates a new page instance with the given view and loads it.
@@ -270,7 +270,17 @@ Type: `Object`
 
 The properties for the view that is loaded.
 
-#### Page.bootstrap(view, props)
+##### opts
+Type: `Object`
+
+Options for the page.
+
+##### opts.title
+Type: `String`
+
+The title for the page.
+
+#### Page.bootstrap(view, props, opts)
 Type: `Function`
 
 This function calls the static load method but only when in the browser context.  All of the parameters are passed through.

@@ -23,6 +23,8 @@ export default class Page {
    * Constructor.
    * @param {Object} [options] - Options for this page.
    * @param {String} [options.title] - The title for the page.
+   * @param {View} [options.view] - The view type for the page.
+   * @param {Object} [options.props] - The properties for the page.
    * @param {Boolean} [options.isBrowserContext] - When set the value will override the normal check done to detrmine if the page is running in a browser.
    * @param {Boolean} [options.isDevContext] - When set the value will override the normal check done to determine if the page is running in a developer context.
    * @returns {void}
@@ -243,8 +245,14 @@ export default class Page {
    * @param {Object} opts - Any additional options for the page.
    * @return {Promise} A promise that resolves to the loaded page.
    */
-  static load(view, props) {
-    const page = new Page({ view, props });
+  static load(view, props, opts = {}) {
+    const page = new Page({
+      view,
+      props,
+      isBrowserContext: Inspect.isBrowserContext(),
+      isDevContext: Inspect.isDevContext(),
+      title: opts.title
+    });
     return page.load();
   }
 
@@ -252,11 +260,12 @@ export default class Page {
    * This function calls the static load method but only when in the browser context.
    * @param {View} view - The view to load into a page.
    * @param {Object} props - The properties for the given view.
+   * @param {Object} opts - Any additional options for the page.
    * @return {Promise} A promise that resolves to the loaded page.
    */
-  static bootstrap(view, props) {
+  static bootstrap(view, props, opts) {
     if (Inspect.isBrowserContext()) {
-      return Page.load(view, props);
+      return Page.load(view, props, opts);
     }
     return Promise.resolve(null);
   }
