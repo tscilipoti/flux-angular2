@@ -243,14 +243,8 @@ export default class Page {
    * @param {Object} opts - Any additional options for the page.
    * @return {Promise} A promise that resolves to the loaded page.
    */
-  static load(view, props, opts = {}) {
-    const page = new Page({
-      view,
-      props,
-      title: opts.tile,
-      isBrowserContext: opts.isBrowserContext,
-      mIsDevContext: opts.mIsDevContext
-    });
+  static load(view, props) {
+    const page = new Page({ view, props });
     return page.load();
   }
 
@@ -258,12 +252,11 @@ export default class Page {
    * This function calls the static load method but only when in the browser context.
    * @param {View} view - The view to load into a page.
    * @param {Object} props - The properties for the given view.
-   * @param {Object} opts - Any additional options for the page.
    * @return {Promise} A promise that resolves to the loaded page.
    */
-  static bootstrap(view, props, opts) {
+  static bootstrap(view, props) {
     if (Inspect.isBrowserContext()) {
-      return Page.load(view, props, opts);
+      return Page.load(view, props);
     }
     return Promise.resolve(null);
   }

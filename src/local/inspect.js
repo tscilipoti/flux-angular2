@@ -1,3 +1,5 @@
+let isDev = null;
+let isBrowser = null;
 
 /**
  * Helper functions for doing reflection.
@@ -9,7 +11,19 @@ export default class Inspect {
    * @returns {Boolean} true if the current code is running in a browser, false otherwise.
    */
   static isBrowserContext() {
+    if (isBrowser !== null) {
+      return isBrowser;
+    }
     return (typeof window !== 'undefined' && window);
+  }
+
+  /**
+   * Set if in browser context.
+   * @param {Boolean} isBrowserContext - The value that will be returned from the isBrowserContext function.
+   * @return {void}
+   */
+  static setBrowserContext(isBrowserContext) {
+    isBrowser = isBrowserContext;
   }
 
   /**
@@ -17,6 +31,10 @@ export default class Inspect {
    * @returns {Boolean} - true if the current code is running in a browser, false otherwise.
    */
   static isDevContext() {
+    if (isDev !== null) {
+      return isDev;
+    }
+
     if (!document || !document.URL) {
       return false;
     }
@@ -30,6 +48,15 @@ export default class Inspect {
     }
 
     return false;
+  }
+
+  /**
+   * Set if in developer context.
+   * @param {Boolean} isDevContext - The value that will be returned from the isDevContext function.
+   * @return {void}
+   */
+  static setDevContext(isDevContext) {
+    isDev = isDevContext;
   }
 
   /**

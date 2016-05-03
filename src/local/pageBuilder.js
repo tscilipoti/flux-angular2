@@ -1,5 +1,6 @@
 import Page from './page';
 import View from './view';
+import Inspect from './inspect';
 import * as JSDOM from 'jsdom';
 
 /**
@@ -115,6 +116,9 @@ export default class PageBuilder {
         }
       }
     }
+
+    Inspect.setBrowserContext(false);
+    Inspect.setDevContext(false);
 
     global.document = PageBuilder.renderToDocument(opts);
     return Page.load(opts.view, opts.props);

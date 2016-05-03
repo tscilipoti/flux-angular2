@@ -255,7 +255,7 @@ Type: `String`
 
 The url to navigate to.
 
-#### Page.load(view, props, options)
+#### Page.load(view, props)
 Type: `Function`
 
 This is a static function that creates a new page instance with the given view and loads it.
@@ -270,30 +270,7 @@ Type: `Object`
 
 The properties for the view that is loaded.
 
-##### options
-Type: `Object`
-
-Options for the Page class.
-
-##### options.title
-Type: `String`
-
-Optional parameter.  When provided the browser will display the given title.
-
-##### options.isBrowserContext
-Type: `Boolean`
-
-Optional parameter that when defined will indicate if the Page is running within the context of a browser or a server.  By default the Page will
-determine this on it's own but this option can be useful when creating unit tests and you want to override the default behavior.
-
-##### options.isDevContext
-Type: `Boolean`
-
-Optional parameter that when defined will indicate if the Page is running within the development context.  By default the Page will
-determine this on it's own but this option can be useful when creating unit tests and you want to override the default behavior.
-When left to the default the url of the current page is inspected and if there is a dev token in the page name such as 'index.dev.html' then the isDevContext will be true.
-
-#### Page.bootstrap(view, props, options)
+#### Page.bootstrap(view, props)
 Type: `Function`
 
 This function calls the static load method but only when in the browser context.  All of the parameters are passed through.
