@@ -117,9 +117,6 @@ export default class PageBuilder {
       }
     }
 
-    Inspect.setBrowserContext(false);
-    Inspect.setDevContext(false);
-
     global.document = PageBuilder.renderToDocument(opts);
     return Page.load(opts.view, opts.props);
   }
@@ -129,6 +126,10 @@ export default class PageBuilder {
    * @return {void}
    */
   static testSetup() {
+    // set the context for tests
+    Inspect.setBrowserContext(false);
+    Inspect.setDevContext(false);
+
     // setup the simplest document possible
     const doc = JSDOM.jsdom('<!doctype html><html><body id="page-body-content"><HostView>Loading...</HostView></div></body></html>');
 
