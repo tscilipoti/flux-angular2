@@ -12,7 +12,7 @@ export default class Reducer {
    * @param {Object} opts.initialState - The initial state for the class.
    */
   constructor(opts = {}) {
-    this.mInitialState = opts.initialState || {};
+    this.mInitialState = (typeof opts.initialState === 'undefined') ? {} : opts.initialState;
     this.initActionRouter();
   }
 

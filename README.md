@@ -71,11 +71,11 @@ import Flux from 'flux-angular2';
 @Flux.View.component({
   selector: 'QuestionListView',
   template: (`<div>
-    <div *ngFor="#question of props.questions">
+    <div *ngFor="let question of state">
       <b>{{question.subject}}</b> - {{question.body}}
     </div>
   </div>`),
-  inputs: ['props.questions']
+  inputs: ['state']
 })
 export default class QuestionListView extends Flux.View {
 }
@@ -90,8 +90,8 @@ import Flux from 'flux-angular2';
   selector: 'QuestionAddView',
   template: (`<div>
     <form>
-      <input id="questionSubject" [value]="state.subject" (change)="state.subject = $event.target.value" type="text" placeholder="subject" />
-      <input id="questionBody" [value]="state.body" (change)="state.body = $event.target.value" type="text" placeholder="body" />
+      <input id="questionSubject" [value]="data.subject" (change)="data.subject = $event.target.value" type="text" placeholder="subject" />
+      <input id="questionBody" [value]="data.body" (change)="data.body = $event.target.value" type="text" placeholder="body" />
       <button id="questionAdd" type="button" (click)="handleClick()">Create</button>
     </form>
   </div>`)
@@ -102,25 +102,25 @@ export default class QuestionAddView extends Flux.View {
     super();
 
     // initialize the local state for this view
-    this.state.subject = '';
-    this.state.body = '';
+    this.data.subject = '';
+    this.data.body = '';
   }
 
   handleClick() {
     // dispatch an addQuestion event
     this.dispatch({
       type: 'addQuestion',
-      subject: this.state.subject,
-      body: this.state.body
+      subject: this.data.subject,
+      body: this.data.body
     });
 
     // clear out inputs after creating question
-    this.state.subject = '';
-    this.state.body = '';
+    this.data.subject = '';
+    this.data.body = '';
   }
 }
 ```
-There are a number of things going on in the code above.  First, the user input is being stored in the local state of the view and the state is 
+There are a number of things going on in the code above.  First, the user input is being stored in the local data object of the view and the data is 
 tied to the text input boxes through the template.  
 You'll also notice that the handleClick function is dispatching a message using the dispatch function defined in the View class.  The page property is also 
 defined in Flux.View and references the current singleton instance of the Page class.
@@ -138,7 +138,7 @@ import QuestionReducer from './questionReducer';
   template: (`<div>
     <QuestionAddView></QuestionAddView>
     <div>Size: <span id="questionSize">{{state.questions.length}}</span></div>
-    <QuestionListView [props.questions]="state.questions"></QuestionListView>
+    <QuestionListView [state]="state.questions"></QuestionListView>
   </div>`),
   directives: [QuestionAddView, QuestionListView]
 })
@@ -147,7 +147,6 @@ export default class QuestionAppView extends Flux.AppView {
   constructor() {
     super();
     this.questionReducer = new QuestionReducer({ initialState: this.props.questions });
-    this.copyInitialState(); // copy the values in the object returned by initalState() into the this.state object
   }
 
   reduce(state, action) {
@@ -161,16 +160,11 @@ export default class QuestionAppView extends Flux.AppView {
       questions: this.questionReducer.initialState()
     };
   }
-
-  storeChanged() {
-    this.state.questions = this.storeState.questions;
-  }
 }
 ```
 As you can see the QuestionAppView class extends the Flux.AppView class.
 In this class I've brought together the QuestionAddView and QuestionListView views and I am displaying the one on top of the other.  
 This class also expects a questions property that will be used used to set the initial state for a question reducer.
-You can see that the storeChanged function is being overridden to update the state with the new collection of questions when the store is changed.
 
 #### Page
 
@@ -336,6 +330,23 @@ Type: `Component`
 
 A convenience property that is the same as angular2/core/Component.
 
+#### View.state
+Type: `Object` Default: `Empty Object`
+
+This property will hold an immutable state object that is passed in from the container of the view and will
+contain state values for the view.
+
+#### View.props
+Type: `Object` Default: `Empty Object`
+
+This property will hold an immutable object that contains property values for the view that are in addition to
+the state values.
+
+#### View.data
+Type: `Object` Default: `Empty Object`
+
+This property is used to store state that is local to the view.
+
 ### `AppView`
 Type: `Class`
 
@@ -353,21 +364,15 @@ Type: `Function`
 
 This is called by the Redux package to get the initial state when the page is loaded.
 
-#### AppView.storeChanged()
-Type: `Function`
-
-This function is called after an action has been dispatched and the state changed.
-
-#### AppView.copyInitialState()
-Type: `Function`
-
-When this function is called it will copy all of the properties over from the object returned by the initialState function into
-the object in the state property.
-
-### AppView.storeState
+#### AppView.state
 Type: `Object`
 
-This is a convenience property and is the same as Page.current.store.getState().
+The state property gets set to the state from the page store whenver it's updated.
+
+#### AppView.props
+Type: `Object`
+
+The props property gets set to the value returned from calling page.getProps().
 
 ### `Reducer`
 Type: `Class`

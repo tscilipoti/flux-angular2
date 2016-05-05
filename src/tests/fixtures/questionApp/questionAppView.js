@@ -8,7 +8,7 @@ import QuestionReducer from './questionReducer';
   template: (`<div>
     <QuestionAddView></QuestionAddView>
     <div>Size: <span id="questionSize">{{state.questions.length}}</span></div>
-    <QuestionListView [props.questions]="state.questions"></QuestionListView>
+    <QuestionListView [state]="state.questions"></QuestionListView>
   </div>`),
   directives: [QuestionAddView, QuestionListView]
 })
@@ -17,7 +17,6 @@ export default class QuestionAppView extends Flux.AppView {
   constructor() {
     super();
     this.questionReducer = new QuestionReducer({ initialState: this.props.questions });
-    this.copyInitialState();
   }
 
   reduce(state, action) {
@@ -30,9 +29,5 @@ export default class QuestionAppView extends Flux.AppView {
     return {
       questions: this.questionReducer.initialState()
     };
-  }
-
-  storeChanged() {
-    this.state.questions = this.storeState.questions;
   }
 }
