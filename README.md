@@ -323,7 +323,12 @@ This function is called by the framework when the view has been destroyed.
 #### View.dispatch(action)
 Type: `Function`
 
-A convenience property that is the same as calling Page.current.store.dispatch.
+A convenience property that is the same as calling Page.current.store.dispatch asynchronously.
+
+#### View.dispatchSync(action)
+Type: `Function`
+
+A convenience property that is the same as calling Page.current.store.dispatch synchronously.
 
 #### View.component
 Type: `Component`
@@ -422,6 +427,16 @@ Type: `Function`
 
 This function will return the value passed into the constructor of this class by default.  It can also be overridden
 by sub classes to provide a different behavior.
+
+#### Reducer.dispatch(action)
+Type: `Function`
+
+A convenience property that is the same as calling Page.current.store.dispatch asynchronously.
+
+#### Reducer.dispatchSync(action)
+Type: `Function`
+
+A convenience property that is the same as calling Page.current.store.dispatch.
 
 ### `PageBuilder`
 Type: `Class`

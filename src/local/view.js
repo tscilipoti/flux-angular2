@@ -81,11 +81,22 @@ export default class View {
   }
 
   /**
-   * Dispatch an action to the page store.
+   * Dispatch an async action to the page store.
    * @param {Object} action - The action to dispatch.
    * @returns {void}
    */
   dispatch(action) {
+    setTimeout(() => {
+      this.page.store.dispatch(action);
+    });
+  }
+
+  /**
+   * Dispatch a sync action to the page store.
+   * @param {Object} action - The action to dispatch.
+   * @returns {void}
+   */
+  dispatchSync(action) {
     this.page.store.dispatch(action);
   }
 
