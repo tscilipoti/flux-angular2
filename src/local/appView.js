@@ -36,4 +36,11 @@ export default class AppView extends View {
   initialState() {
     return {};
   }
+
+  /**
+   * Called by the page when the state has been changed.
+   * @return {void}
+   */
+  stateChanged() {
+  }
 }

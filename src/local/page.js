@@ -371,9 +371,12 @@ export default class Page {
    * @returns {void}
    */
   storeListener() {
-    if (this.view && this.view.state) {
+    if (this.view) {
       this.view.state = this.store.getState();
-      this.tick();
+      if (this.view.stateChanged) {
+        this.view.stateChanged();
+      }
     }
+    this.tick();
   }
 }

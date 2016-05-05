@@ -33,7 +33,6 @@ describe('Page', function () {
         let displayCount = document.querySelector('#countDisplay');
         const incrementCount = document.querySelector('#countIncrement');
 
-        console.log('HTML: ' + document.body.innerHTML);
         assert.ok(displayCount, 'could not find countDisplay element');
         assert.equal(displayCount.innerHTML, '0', 'countDisplay has incorrect value.');
         assert.ok(incrementCount, 'could not find countIncrement element');

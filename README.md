@@ -364,6 +364,11 @@ Type: `Function`
 
 This is called by the Redux package to get the initial state when the page is loaded.
 
+#### AppView.stateChanged()
+Type: `Function`
+
+This is called by the page after the state has been changed.
+
 #### AppView.state
 Type: `Object`
 
