@@ -1,6 +1,6 @@
 import Page from './page';
-import { Component, ComponentMetadata } from 'angular2/core';
-import { RouteConfig, ROUTER_DIRECTIVES } from 'angular2/router';
+import { Component, ComponentMetadata } from '@angular/core';
+import { RouteConfig, ROUTER_DIRECTIVES } from '@angular/router';
 
 /**
  * A view on the page.

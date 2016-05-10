@@ -1,5 +1,5 @@
 require('reflect-metadata');
-import { enableProdMode, ApplicationRef } from 'angular2/core';
+import { enableProdMode, ApplicationRef } from '@angular/core';
 import { createStore } from 'redux';
 import Inspect from './inspect';
 import * as FakeStorage from 'fake-storage';
@@ -289,7 +289,7 @@ export default class Page {
         ngInit = true;
       }
       this.title = this.mTitle;
-      const bootstrap = require('angular2/platform/browser').bootstrap;
+      const bootstrap = require('@angular/platform-browser-dynamic').bootstrap;
       return new Promise(function (resolve, reject) {
         bootstrap(self.getView())
           .then(function (compRef) {
