@@ -2,6 +2,7 @@ require('reflect-metadata');
 import { enableProdMode, ApplicationRef } from '@angular/core';
 import { createStore } from 'redux';
 import Inspect from './inspect';
+import DispatchRecorder from './dispatchRecorder';
 import * as FakeStorage from 'fake-storage';
 
 // A singleton instance of Page.
@@ -48,6 +49,7 @@ export default class Page {
     this.mReducer = opts.reducer;
     this.mRequest = opts.request;
     this.mViewLoads = [];
+    this.mDispatchRecorder = new DispatchRecorder();
 
     this.mViewType = opts.view;
     if (opts.props) {
@@ -72,7 +74,7 @@ export default class Page {
    * Get the dispatcher being used for this page.
    */
   get store() {
-    return this.mStore;
+    return this.mStore || this.mDispatchRecorder;
   }
 
   /**
@@ -322,6 +324,7 @@ export default class Page {
     }
     this.mStore = createStore(this.storeReducer.bind(this));
     this.mStoreUnsubscribe = this.mStore.subscribe(this.storeListener.bind(this));
+    this.mDispatchRecorder.replay(this.mStore);
   }
 
   /**
