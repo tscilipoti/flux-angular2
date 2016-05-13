@@ -1,5 +1,6 @@
 let isDev = null;
 let isBrowser = null;
+let xhr = null;
 
 /**
  * Helper functions for doing reflection.
@@ -57,6 +58,29 @@ export default class Inspect {
    */
   static setDevContext(isDevContext) {
     isDev = isDevContext;
+  }
+
+  /**
+   * Get the object to use for http requests.
+   * This defaults to XMLHttpRequest when available.
+   */
+  static get XHR() {
+    if (xhr !== null) {
+      return xhr;
+    }
+    if (typeof XMLHttpRequest !== 'undefined') {
+      return XMLHttpRequest;
+    }
+    throw new Error('XHR is not set.');
+  }
+
+  /**
+   * Set the object to use for http requests.
+   * @param {Object} value - The object to use for http requests.
+   * @return {void}
+   */
+  static setXHR(value) {
+    xhr = value;
   }
 
   /**

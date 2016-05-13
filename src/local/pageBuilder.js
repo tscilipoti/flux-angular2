@@ -2,6 +2,7 @@ import Page from './page';
 import View from './view';
 import Inspect from './inspect';
 import * as JSDOM from 'jsdom';
+import * as XHR from 'xmlhttprequest';
 
 /**
  * Class used to build html output for pages.
@@ -55,6 +56,7 @@ export default class PageBuilder {
    * @returns {String} A string representation of the given page.
    */
   renderToString(view, props) {
+    Inspect.setXHR(XHR.XMLHttpRequest);
     const styleSheets = (Array.isArray(this.styleSheets) ? this.styleSheets.join('\n    ') : this.styleSheets) || '';
     const scripts = (Array.isArray(this.scripts) ? this.scripts.join('\n    ') : this.scripts) || '';
     const selector = (view ? View.getSelector(view) : 'div');
@@ -99,6 +101,7 @@ export default class PageBuilder {
    * @return {Promise} A promise that resolves with the loaded page.
    */
   static test(opts = {}) {
+    Inspect.setXHR(XHR.XMLHttpRequest);
     Page.localStorage.clear();
     Page.sessionStorage.clear();
 
@@ -122,8 +125,9 @@ export default class PageBuilder {
       opts.view,
       opts.props,
       {
-        storeListener: opts.storeListener,
-        reducer: opts.reducer
+        action: opts.action,
+        reducer: opts.reducer,
+        request: opts.request
       });
   }
 

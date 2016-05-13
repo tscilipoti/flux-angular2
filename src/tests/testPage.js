@@ -1,6 +1,7 @@
 import DetailView from './fixtures/simpleApp/detailView';
 import CountAppView from './fixtures/countApp/countAppView';
 import QuestionAppView from './fixtures/questionApp/questionAppView';
+import CallOutView from './fixtures/callOut/countAppView';
 import PageBuilder from '../local/pageBuilder';
 import * as assert from 'assert';
 
@@ -74,6 +75,40 @@ describe('Page', function () {
           assert.equal(questionSize.innerHTML, '1', 'questionSize has incorrect value after click.');
           done();
         }, 100);
+      })
+      .catch(function (err) {
+        done(err);
+      });
+  });
+
+  it('Should handle request overrides as expected.', function (done) {
+    PageBuilder.test({
+      view: CallOutView,
+      props: { count: 5 },
+      request: {
+        'GET:http://fake.org/functions/increment': 6
+      },
+      action: {
+        incrementComplete: () => {
+          const displayCount = document.querySelector('#countDisplay');
+          assert.ok(displayCount, 'could not find countDisplay element after click.');
+          assert.equal(displayCount.innerHTML, '6', 'countDisplay has incorrect value after click.');
+          done();
+        }
+      }
+    })
+      .then(function (page) {
+        page.tick();
+        const displayCount = document.querySelector('#countDisplay');
+        const incrementCount = document.querySelector('#countIncrement');
+
+        assert.ok(displayCount, 'could not find countDisplay element');
+        assert.equal(displayCount.innerHTML, '5', 'countDisplay has incorrect value.');
+        assert.ok(incrementCount, 'could not find countIncrement element');
+
+        // simulate a click on the increment count element.
+        incrementCount.dispatchEvent(new Event('click'));
+        page.tick();
       })
       .catch(function (err) {
         done(err);

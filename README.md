@@ -494,14 +494,14 @@ Type: `Object`
 
 Values to set for local storage.
 
-##### opts.storeListener
-Type: `Function`
+##### opts.action
+Type: `Object or Function`
 
-A function that gets called whenever there is a reducing event.  This function will be passed that will have the following properties:
-- action: The action that has occured.
-- before: The state object before the action is reduced.
-- after: The state object after the action is reduced.
-- isOverride: Flag that indicates if the reducer was overridden.
+This is used to listen to the state of the view after certain actions have been dispatched and finished being processed. 
+If this is an object then any function on the object that matches the name of an action that has been processed will will
+be called with an object that includes the current state and the name of the action that was executed.  If it is a function
+then that function will be execute whenever any action has been processed and will be passed the current state and the name 
+of the action that was executed.
 
 ##### opts.reducer
 Type: `Object`
@@ -509,3 +509,23 @@ Type: `Object`
 When this is set to an object it will override reducing actions.  Set a property on this object to the same name as an action.type
 and it will be used instead of the normal reducing function.  The property can be a reducing function or an object which will
 be merged with the current state.
+
+##### opts.request
+Type: `Object or Function`
+
+This is used to override results that would normally come back from a call to Page.request.  When it is a function then
+it must match the signature and return type of the Page.request function as it will be used instead.
+
+When it is an Object then the property names will be matched up with the method and url for calls to the Page.request function.
+The following table describes how to create mappings with property names:
+
+- `'GET:http://fake.org/'` will be used when `Page.request({ method: 'GET', url: 'http://fake.org' })` is called.
+- `'GET:*'` will be used when any calls to Page.request have `method: 'GET'` and there are no specific property name matches.
+- `'*'` will be used for any calls to Page.request that don't have a specific property name match or method and wildcard match.
+
+Each property can be any one of the following:
+
+- A function which must match the signature and return type of the Page.request function as it will be used instead.
+- An object that has a property named `reject` which will be returned with Promise.reject.
+- An object that has a property named `resolve` which will be returned with Promise.resolve.
+- An object with neither reject or resolve properties which will be returned with Promise.resolve.

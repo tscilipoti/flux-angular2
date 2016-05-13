@@ -27,8 +27,9 @@ export default class Page {
    * @param {Object} [options.props] - The properties for the page.
    * @param {Boolean} [options.isBrowserContext] - When set the value will override the normal check done to detrmine if the page is running in a browser.
    * @param {Boolean} [options.isDevContext] - When set the value will override the normal check done to determine if the page is running in a developer context.
-   * @param {Function} [option.storeListener] - When set this function will be called when the store is changed.
+   * @param {Function} [option.action] - When set this function will be called when the store is changed and the view updated.
    * @param {Object} [option.reducer] - When set this will override existing reducers and return the state defined.
+   * @param {Object} [option.request] - When set this will overrdie the existing request method with values from the object.
    * @returns {void}
    */
   constructor(options) {
@@ -42,8 +43,10 @@ export default class Page {
     this.mTitle = opts.title || '';
     this.mIsBrowserContext = opts.isBrowserContext;
     this.mIsDevContext = opts.isDevContext;
-    this.mStoreListener = opts.storeListener;
+    this.mAction = opts.action;
+    this.mLastActionType = null;
     this.mReducer = opts.reducer;
+    this.mRequest = opts.request;
     this.mViewLoads = [];
 
     this.mViewType = opts.view;
@@ -256,8 +259,9 @@ export default class Page {
       isBrowserContext: Inspect.isBrowserContext(),
       isDevContext: Inspect.isDevContext(),
       title: opts.title,
-      storeListener: opts.storeListener,
-      reducer: opts.reducer
+      action: opts.action,
+      reducer: opts.reducer,
+      request: opts.request
     });
     return page.load();
   }
@@ -327,12 +331,11 @@ export default class Page {
    * @returns {Object} The new state.
    */
   storeReducer(state, action) {
+    this.mLastActionType = action.type;
     let result = state;
-    let isOverride = false;
     try {
       // override reducer if enabled
       if (this.mReducer && this.mReducer[action.type]) {
-        isOverride = true;
         if (typeof this.mReducer[action.type] === 'function') {
           result = this.mReducer[action.type](state, action);
         } else {
@@ -347,16 +350,6 @@ export default class Page {
       // get state from the view
       } else {
         result = this.view.reduce(state, action);
-      }
-
-      // notify listeners of a state change
-      if (this.mStoreListener) {
-        this.mStoreListener({
-          before: state,
-          after: result,
-          isOverride,
-          action
-        });
       }
 
       return result;
@@ -378,5 +371,106 @@ export default class Page {
       }
     }
     this.tick();
+
+    // notify listeners of a state change
+    if (this.mAction) {
+      const opts = { state: this.store.getState(), action: this.mLastActionType };
+      if (typeof this.mAction === 'function') {
+        this.mAction(opts);
+      } else if (this.mAction[this.mLastActionType] !== undefined) {
+        this.mAction[this.mLastActionType](opts);
+      }
+    }
+  }
+
+  /**
+   * Make an http request.
+   * @param {Object} opts - The options for the function.
+   * @return {Promise} A promise that resolves with the request object completed.
+   */
+  request(opts) {
+    // override the request method
+    if (this.mRequest) {
+      if (typeof(this.mRequest) === 'function') {
+        return this.mRequest(opts);
+      }
+      const key = `${opts.method}:${opts.url}`;
+      let handler = this.mRequest[key];
+      if (handler === undefined) {
+        handler = this.mRequest[`${opts.method}:*`];
+      }
+      if (handler === undefined) {
+        handler = this.mRequest['*'];
+      }
+
+      if (handler === undefined) {
+        return Promise.reject(new Error(`Route not defined: ${key}`));
+      } else if (typeof handler === 'function') {
+        return handler(opts);
+      } else if (handler.reject !== undefined) {
+        return Promise.reject(handler.reject);
+      } else if (handler.resolve !== undefined) {
+        return Promise.resolve(handler.resolve);
+      }
+      return Promise.resolve(handler);
+    }
+
+    // normal request
+    return new Promise((resolve, reject) => {
+      try {
+        // configure request
+        const xhr = new Inspect.XHR();
+        xhr.open(opts.method, opts.url);
+        if (opts.headers) {
+          opts.headers.forEach(header => {
+            xhr.setRequestHeader(header.key, header.value);
+          });
+        }
+        if (opts.responseType) {
+          xhr.responseType = opts.responseType;
+        }
+        if (opts.body) {
+          xhr.setRequestHeader('Content-Type', 'application/json');
+        }
+
+        // handle response
+        xhr.onreadystatechange = () => {
+          if (xhr.readyState === 4) {
+            try {
+              const contentType = xhr.getResponseHeader('Content-Type');
+              const isJSON = (contentType && contentType.toLowerCase().indexOf('application/json') !== -1);
+              if (xhr.status < 299) {
+                if (isJSON) {
+                  resolve(JSON.parse(xhr.response));
+                } else {
+                  resolve(xhr);
+                }
+              } else {
+                if (isJSON) {
+                  reject(JSON.parse(xhr.response));
+                } else {
+                  reject(new Error(`${xhr.status}: ${xhr.statusText}`));
+                }
+              }
+            } catch (err) {
+              reject(err);
+            }
+          }
+        };
+
+        // send request
+        if (opts.body) {
+          if (typeof opts.body === 'string') {
+            xhr.send(opts.body);
+          } else {
+            xhr.send(JSON.stringify(opts.body));
+          }
+        } else {
+          xhr.send();
+        }
+      } catch (err) {
+        reject(err);
+      }
+    });
   }
 }
