@@ -39,8 +39,9 @@ export default class Reducer {
    * @returns {void}
    */
   dispatch(action) {
+    const self = this;
     setTimeout(() => {
-      this.page.store.dispatch(action);
+      self.page.store.dispatch(action);
     });
   }
 
