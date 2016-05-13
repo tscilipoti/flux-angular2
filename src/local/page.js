@@ -389,6 +389,8 @@ export default class Page {
    * @return {Promise} A promise that resolves with the request object completed.
    */
   request(opts) {
+    const format = opts.format || function (response) { return response; };
+
     // override the request method
     if (this.mRequest) {
       if (typeof(this.mRequest) === 'function') {
@@ -410,9 +412,9 @@ export default class Page {
       } else if (handler.reject !== undefined) {
         return Promise.reject(handler.reject);
       } else if (handler.resolve !== undefined) {
-        return Promise.resolve(handler.resolve);
+        return Promise.resolve(format(handler.resolve));
       }
-      return Promise.resolve(handler);
+      return Promise.resolve(format(handler));
     }
 
     // normal request
@@ -441,9 +443,9 @@ export default class Page {
               const isJSON = (contentType && contentType.toLowerCase().indexOf('application/json') !== -1);
               if (xhr.status < 299) {
                 if (isJSON) {
-                  resolve(JSON.parse(xhr.response));
+                  resolve(format(JSON.parse(xhr.response)));
                 } else {
-                  resolve(xhr);
+                  resolve(format(xhr));
                 }
               } else {
                 if (isJSON) {

@@ -294,6 +294,49 @@ Type: `Error`
 
 The error to handle.
 
+#### Page.request(opts)
+Type: `Function`
+
+Execute an http request.  This will return a promise that resolves to the resulting object if the response has a content
+type of application/json otherwise it will resolve with the completed XMLHttpRequest.
+
+##### opts
+Type: `Object`
+
+The options for the request.
+
+##### opts.method
+Type: `String`
+
+The type of http method.  i.e. GET, POST, PUT, etc.
+
+##### opts.url
+Type: `String`
+
+The url for the request.
+
+##### opts.body
+Type: `String or Object`
+
+The body for the request.  If this is a string it is sent as is in the body.  If it is an object then it will be stringified
+and the content type will be set to application/json.
+
+##### opts.headers
+Type: `Array`
+
+An array of header objects for the request that each must have a key and value parameter.
+
+##### opts.responseType
+Type: `String`
+
+The type of response to return.
+
+##### opts.format
+Type: `Function`
+
+This function will be called with the result of a sucessful call and the return from this function will be what is 
+resolved in the promise.
+
 ### `View`
 Type: `Class`
 
