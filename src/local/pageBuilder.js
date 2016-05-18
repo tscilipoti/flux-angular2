@@ -15,6 +15,7 @@ export default class PageBuilder {
   constructor() {
     this.mStyleSheets = [];
     this.mScripts = [];
+    this.mBaseUrl = '/';
   }
 
   /**
@@ -50,6 +51,22 @@ export default class PageBuilder {
   }
 
   /**
+   * The base url for the page.
+   */
+  get baseUrl() {
+    return this.mBaseUrl;
+  }
+
+  /**
+   * Set the base url for the page.
+   * @param {String} value - The base url for the page.
+   * @return {void}
+   */
+  set baseUrl(value) {
+    this.mBaseUrl = value;
+  }
+
+  /**
    * Write the given page out to a string.
    * @param {View} view - The view to render to string.
    * @param {Object} props - Optional properties to render.
@@ -65,6 +82,7 @@ export default class PageBuilder {
     return `<!DOCTYPE HTML>
 <html>
   <head>
+    <base href='${this.baseUrl}'>
     ${styleSheets}
     ${propTag}
     ${scripts}

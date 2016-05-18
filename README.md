@@ -496,6 +496,11 @@ Type: `String or String[]`
 
 A property that contains the script tags that should be included in the page.
 
+#### PageBuilder.baseUrl
+Type: `String` Default: `/`
+
+A property that contains the base url for the page.
+
 #### PageBuilder.renderToString(view, props)
 Type: `Function`
 
