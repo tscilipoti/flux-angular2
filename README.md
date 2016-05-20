@@ -128,7 +128,7 @@ defined in Flux.View and references the current singleton instance of the Page c
 #### AppView
 Now that I've defined all of the views I'll need I can create a class that will bring them together to be displayed.  I'll do this with an AppView I'll define in a file named `QuestionAppView.js`:
 ```JavaScript
-import Flux from '../../../local/index';
+import Flux from 'flux-angular2';
 import QuestionListView from './questionListView';
 import QuestionAddView from './questionAddView';
 import QuestionReducer from './questionReducer';
